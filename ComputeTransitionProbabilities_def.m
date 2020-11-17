@@ -188,7 +188,6 @@ for i = 1 : K  % prendo il primo stato
                                             Transition_probabilities_matrix(i,final_state-1,u) = 0;
                                             
                                         end
-                                        
                                     end   
                                 end
                             end
