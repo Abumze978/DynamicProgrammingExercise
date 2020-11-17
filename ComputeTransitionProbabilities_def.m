@@ -1,4 +1,4 @@
-function P = ComputeTransitionProbabilities_def(stateSpace, map)
+function P1 = ComputeTransitionProbabilities_def(stateSpace, map)
 %COMPUTE_TRANSITION_PROBABILITIES Compute transition probabilities.
 %
 %   P = ComputeTransitionProbabilities(stateSpace, map) 
@@ -233,28 +233,28 @@ for i = 1 : K
     end
 end    
     
-P = Transition_probabilities_matrix;
+P1 = Transition_probabilities_matrix;
 
 
-P(307,:,HOVER)
-
-%P(169,:,NORTH)
-
-
-% disp(P(77,75,SOUTH))
-% disp(P(77,73,SOUTH))
-% disp(P(77,39,SOUTH))
-% disp(P(77,107,SOUTH))
-% disp(P(77,77,SOUTH))
-% disp(P(77,base,SOUTH))
+% P(307,:,HOVER)
+% 
+% %P(169,:,NORTH)
 % 
 % 
-% disp(P(169,171,NORTH))
-% disp(P(169,195,NORTH))
-% disp(P(169,147,NORTH))
-% disp(P(169,173,NORTH))
-% disp(P(169,169,NORTH))
-% disp(P(169,base,NORTH))
+% % disp(P(77,75,SOUTH))
+% % disp(P(77,73,SOUTH))
+% % disp(P(77,39,SOUTH))
+% % disp(P(77,107,SOUTH))
+% % disp(P(77,77,SOUTH))
+% % disp(P(77,base,SOUTH))
+% % 
+% % 
+% % disp(P(169,171,NORTH))
+% % disp(P(169,195,NORTH))
+% % disp(P(169,147,NORTH))
+% % disp(P(169,173,NORTH))
+% % disp(P(169,169,NORTH))
+% % disp(P(169,base,NORTH))
 
 
 

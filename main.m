@@ -108,7 +108,29 @@ if transitionProbabilitiesImplemented
     % to state j if control input l is applied.
     
     % TODO: Question b)
-    P = ComputeTransitionProbabilities_def(stateSpace, map);
+    P1 = ComputeTransitionProbabilities_def(stateSpace, map);
+    
+ load('example_P.mat');
+ 
+ errors = [];
+    
+    for i = 1 : K
+        
+        for j = 1 : K
+            
+            for u = 1 : 5
+                
+                if(P1(i,j,u) ~= P(i,j,u))
+                    
+                    errors = [errors ;
+                               i,j,u];
+                    
+                end
+            end
+        end
+    end
+    
+    disp(errors);
 end
 
 %% Compute stage costs
