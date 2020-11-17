@@ -209,15 +209,21 @@ for i = 1 : K
         sum = 0;
         
         for j = 1 : K
-            
-            if(map(stateSpace(i,1),stateSpace(i,2)) ~= BASE)
+                
+              if(i ~= 90)
                 
                 sum = sum + Transition_probabilities_matrix(i,j,u);
                 
+              end
+            
             end
             
-        end
+    end
         
+    
+        %QUA SICURAMENTE C'E' UN ERRORE, CHE CI PORTA LA PROBABILITA' A 1
+        %QUANDO DOVREBBE ESSERE 0 NEL CASO DI INPUT NON AMMISSIBILI!
+    
         Transition_probabilities_matrix(i,base,u) = Transition_probabilities_matrix(i,base,u) + (1 - sum);
         %Ho aggiunto a dx dell'uguale Prob base perchè se sono in una
         %casella dove VOLONTARIAMENTE decido di andare in base, avrò come

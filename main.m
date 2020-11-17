@@ -111,26 +111,52 @@ if transitionProbabilitiesImplemented
     P1 = ComputeTransitionProbabilities_def(stateSpace, map);
     
  load('example_P.mat');
- 
- errors = [];
+%  
+%  counter = 0;
+%  errors = [];
+%     
+%     for i = 1 : K
+%         
+%         for j = 1 : K
+%             
+%             for u = 1 : 5
+%                 
+%                 if(P1(i,j,u) ~= P(i,j,u))
+%                     
+%                     counter = counter + 1;
+%                     errors = [errors ;
+%                                i,j,u];
+%                     
+%                 end
+%             end
+%         end
+%     end
     
+%     disp(errors);
+%     
+%     disp(counter);
+    
+
+%questo pezzo di codice mi stampa prima la probabilità di andare in base
+%calcolata da un generico i con un generico u dell'esempio e poi quella
+%calcolata dal nostro algoritmo. Ad ogni iterazione ci accorgiamo che
+%quando ci sono calcoli da fare il nostro algoritmo ci azzecca ma a volte
+%mette degli 1 quando ci sarebbero degli zero
+
+contatore = 0;
     for i = 1 : K
-        
-        for j = 1 : K
             
             for u = 1 : 5
                 
-                if(P1(i,j,u) ~= P(i,j,u))
-                    
-                    errors = [errors ;
-                               i,j,u];
-                    
-                end
+                disp(P(i,137,u));
+                disp(P1(i,137,u));
+                contatore = contatore + 1;
+        
             end
-        end
+            
     end
-    
-    disp(errors);
+        
+    disp(contatore);
 end
 
 %% Compute stage costs
