@@ -155,14 +155,22 @@ end
         end
      end
     
-    disp('errors = ');
-    disp(errors);
+%     disp('errors = ');
+%     disp(errors);
     disp('num errori ancora presenti = ');
     disp(counter);
 
 
-P(375,137,WEST)
-P1(375,137,WEST)
+% P(451,137,HOVER)
+% P1(451,451,HOVER)
+% P1(451,453,HOVER)
+% P1(451,449,HOVER)
+% P1(451,441,HOVER)
+% P1(451,137,HOVER)
+
+P(476,137,HOVER)
+P1(476,137,HOVER)
+% P1(476,:,HOVER)
 
 
 

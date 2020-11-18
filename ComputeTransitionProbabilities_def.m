@@ -281,28 +281,32 @@ end
 
 
 
-for u = 1 : 5
-    
-    for i = 1 : K
+
+for i = 1 : K
+
+    for u = 1 : 5
         
-        sum = 0;
+        sum = zeros(K,5);
         
-        for j = 1 : K
+        for j = 1 : K 
             
-            if(i ~= base && Transition_probabilities_matrix(i,base,u) == 0)
-                %se su base c'è già un valore, significa che sono nel caso
-                %in cui mi schianto su un bordo e quindi l'ho già calcolato
+            if(j ~= base) %&& Transition_probabilities_matrix(i,base,u) == 0
+%                 se su base c'è già un valore, significa che sono nel caso
+%                 in cui mi schianto su un bordo e quindi l'ho già calcolato
                 
-                sum = sum + Transition_probabilities_matrix(i,j,u);
+                sum(i,u) = sum(i,u) + Transition_probabilities_matrix(i,j,u);
                 
             end
             
         end
         
-    end
+        
+        
+        
+   %end
 
-        if (sum ~= 0)
-            Transition_probabilities_matrix(i,base,u) = Transition_probabilities_matrix(i,base,u) + (1 - sum);
+        if (sum(i,u) ~= 0)
+            Transition_probabilities_matrix(i,base,u) = (1 - sum(i,u)); %Transition_probabilities_matrix(i,base,u) + ;
             %Ho aggiunto a dx dell'uguale Prob base perchè se sono in una
             %casella dove VOLONTARIAMENTE decido di andare in base, avrò come
             %Prob base la somma tra il valore di crash e il valore dello
@@ -315,10 +319,12 @@ for u = 1 : 5
             %amen, ma se ci posso andare volontariamente, la riga torna a
             %valere 1. CREDO
         end
+    end
 end
     
     
 P1 = Transition_probabilities_matrix;
+sum(476,5)
 
 
 % P(307,:,HOVER)
