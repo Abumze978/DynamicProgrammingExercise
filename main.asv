@@ -167,9 +167,9 @@ end
 
      
 disp('loro');
-P(3,137,SOUTH)
+P(2,137,NORTH)
 disp('noi');
-P1(3,137,SOUTH)
+P1(2,137,NORTH)
 
 
 

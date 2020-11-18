@@ -29,6 +29,8 @@ global K TERMINAL_STATE_INDEX
 % initializing transition probabilities matrix
 
 Transition_probabilities_matrix = zeros(K,K,5);
+w = size(map,1); %width
+h = size(map,2); %height
 
 % finding the indexes of the stateSpace corresponding to the base and the shooters
 
@@ -187,23 +189,28 @@ for i = 1 : K  % prendo il primo stato
                                                 elseif (map(stateSpace(k,1),stateSpace(k,2)) == DROP_OFF &&stateSpace(k,3) == 0 && pack_i == 1)
                                                     %se parto da i con pacco e mi trovo sopra la cella drop off
                                                     
-                                                    final_state = k; %SENZA pacco
+                                                    final_state = k; 
                                                     drop = 1;
                                                     
                                                 end
                                                 
-                                            elseif (m == size(map,1)+1 || n == size(map,2)+1) 
-                                                %se mi trovo in uno stato fuori dalla stateSpace MA in una cella appena fuori 
-                                            
-                                                count_borders = count_borders + 1;
-                                                
                                             end
                                             
                                         end
-                                        
-                                        disp('count borders = ');
-                                        count_borders
-                                        
+                                      
+                                        if ((m==0 && n == 1) || (m == 0 && n == h) || (m == w+1 && n == 1) || (m == w+1 && n == h)...
+                                            || (m == 1 && n == 0) || (m == w && n == 0) || (m == w && n == h+1) || (m == 1 && n == h+1))
+                                            %caso spigolo mappa
+                              
+                                            count_borders = count_borders + 2;
+                                               
+                                        elseif ((m == 0 && n < h && n > 0) || (m == w+1 && n < h && n > 0) || (n == 0 && m < w && m > 0) || (n == h+1 && m < h && m > 0))
+                                            %caso bordo laterale mappa
+                                            
+                                            count_borders = count_borders + 1;
+                                            
+                                        end
+                                      
                                         if (final_state ~= 0 && pick ~= 1 && drop ~= 1 )
                                             % arrivo in una cella ammissibile ma non sono nel caso pick up nè drop off
                                             
