@@ -106,18 +106,15 @@ for i = 1 : K  % prendo il primo stato
         
          %POSSO AVERE UN CAMBIO DI PACCHETTO SE HO UN PACCO E CRASHO
        
-        if(((m_j == m_i + 1 && n_j == n_i) || (m_j == m_i - 1 && n_j == n_i) || (m_j == m_i && n_j == n_i + 1) || (m_j == m_i && n_j == n_i - 1) || (m_j == m_i && n_j == n_i))) % || (m_i == size(map,1) || m_j == size(map,2))) 
-            %entro dentro questo if se j è uno dei quattro vicini di i (o i stesso) oppure se mi trovo su a un bordo
+        if(((m_j == m_i + 1 && n_j == n_i) || (m_j == m_i - 1 && n_j == n_i) || (m_j == m_i && n_j == n_i + 1) || (m_j == m_i && n_j == n_i - 1) || (m_j == m_i && n_j == n_i))) 
+            %entro dentro questo if se j è uno dei quattro vicini di i (o i stesso) 
 
             for u = 1 : 5   % fissati i due stati, scorro tutti i control inputs
                 
                 if (i ~= drop_off) 
                     
-                   
-                    
-                    if (pack_i == pack_j) %|| (m_i == size(map,1) || m_j == size(map,2)))    
+                    if (pack_i == pack_j)    
                         % only transitions where the 'package state' is consistent except for the pickup station 
-                        
                         
                         if ((u == NORTH && n_j == n_i + 1 && m_j == m_i) || (u == SOUTH && n_j == n_i - 1 && m_j == m_i) || (u == EAST && m_j == m_i + 1 && n_i == n_j) || (u == WEST && m_j == m_i - 1 && n_i == n_j) || (u == HOVER && m_j == m_i && n_i == n_j))
                             

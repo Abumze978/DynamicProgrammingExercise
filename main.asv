@@ -167,9 +167,8 @@ end
 
      
 disp('loro');
-P(2,137,NORTH)
-disp('noi');
-P1(2,137,NORTH)
+P(3,137,SOUTH)
+P1(3,137,SOUTH)
 
 
 
