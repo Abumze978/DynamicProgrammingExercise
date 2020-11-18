@@ -50,6 +50,12 @@ for i = 1 : K
             m_pick_up = stateSpace(i,1);
             n_pick_up = stateSpace(i,2);
             
+        elseif((map(stateSpace(i,1),stateSpace(i,2)) == DROP_OFF) && stateSpace(i,3) == 1)
+            
+            drop_off = i;
+            m_drop_off = stateSpace(i,1);
+            n_drop_off = stateSpace(i,2);
+            
         end
         
 end
@@ -96,148 +102,186 @@ for i = 1 : K  % prendo il primo stato
         n_j = stateSpace(j,2);  % n_j
         pack_j = stateSpace(j,3);
         
-        if((m_j == m_i + 1 && n_j == n_i) || (m_j == m_i - 1 && n_j == n_i) || (m_j == m_i && n_j == n_i + 1) || (m_j == m_i && n_j == n_i - 1) || (m_j == m_i && n_j == n_i))
-            
+        if(((m_j == m_i + 1 && n_j == n_i) || (m_j == m_i - 1 && n_j == n_i) || (m_j == m_i && n_j == n_i + 1) || (m_j == m_i && n_j == n_i - 1) || (m_j == m_i && n_j == n_i)) || (m_i == size(map,1) || m_j == size(map,2))) 
+            %entro dentro questo if se j è uno dei quattro vicini di i (o i stesso) oppure se mi trovo su a un bordo
+
             for u = 1 : 5   % fissati i due stati, scorro tutti i control inputs
                 
-                if (pack_i == pack_j)   % only transitions where the 'package state' is consistent except for the pickup station
+                if (i ~= drop_off) 
                     
-                    if ((u == NORTH && n_j == n_i + 1 && m_j == m_i) || (u == SOUTH && n_j == n_i - 1 && m_j == m_i) || (u == EAST && m_j == m_i + 1 && n_i == n_j) || (u == WEST && m_j == m_i - 1 && n_i == n_j) || (u == HOVER && m_j == m_i && n_i == n_j))
+                    if (pack_i == pack_j || (m_i == size(map,1) || m_j == size(map,2)))    
+                        % only transitions where the 'package state' is consistent except for the pickup station and drop off station
+                        % posso avere un cambio di pacco se il mio stato di arrivo è la drop off station SENZA pacco e parto con il pacco
                         
-                        if (m_j == m_pick_up && n_j == n_pick_up && pack_i == 0) %se arrivo alla pick up station senza pacco
-                           
-                            Transition_probabilities_matrix(i,j+1,u) = (1 - P_WIND) * (1-Crashing_probabilities(m_j,n_j));
-                            %vado da i a j+1 perchè prendo il pacco che prima non avevo
-                            Transition_probabilities_matrix(i,j,u) = 0; 
+                        if ((u == NORTH && n_j == n_i + 1 && m_j == m_i) || (u == SOUTH && n_j == n_i - 1 && m_j == m_i) || (u == EAST && m_j == m_i + 1 && n_i == n_j) || (u == WEST && m_j == m_i - 1 && n_i == n_j) || (u == HOVER && m_j == m_i && n_i == n_j))
                             
-                        else
-                        
-                            Transition_probabilities_matrix(i,j,u) = (1-P_WIND) * (1-Crashing_probabilities(m_j,n_j));
+                            if (j == pick_up) %se arrivo alla pick up station senza pacco e parto senza pacco
+                                
+                                Transition_probabilities_matrix(i,j+1,u) = (1 - P_WIND) * (1-Crashing_probabilities(m_j,n_j));
+                                %vado da i a j+1 perchè prendo il pacco che prima non avevo
+                                Transition_probabilities_matrix(i,j,u) = 0;
+                                
+                            elseif (j == drop_off) %se arrivo alla drop off CON il pacco partendo con pacco
+                                
+                                Transition_probabilities_matrix(i,j-1,u) = 0;
+                                %non posso partire con il pacco e arrivare alla drop off con il pacco
+                                Transition_probabilities_matrix(i,j,u) = (1 - P_WIND) * (1-Crashing_probabilities(m_j,n_j));
+                                %prob di partire con pacco e arrivare a drop off senza pacco senza vento
+                                
+                            else
+                                
+                                Transition_probabilities_matrix(i,j,u) = (1-P_WIND) * (1-Crashing_probabilities(m_j,n_j));
+                                
+                            end
                             
-                        end
-                        
-                        % Transition_probabilities_matrix(i,base,u) = Transition_probabilities_matrix(i,base,u) + (1-P_WIND) * Crashing_probabilities(m_j,n_j);
-                        
-                        
-                        
-                        for m = m_j-1 : m_j+1
+                            % Transition_probabilities_matrix(i,base,u) = Transition_probabilities_matrix(i,base,u) + (1-P_WIND) * Crashing_probabilities(m_j,n_j);
                             
-                            for n = n_j-1 : n_j+1
+                            
+                            
+                            for m = m_j-1 : m_j+1
                                 
-                                is_neighbour = 0;
-                                
-                                if ((abs(m_j-m) == 0 && abs(n_j-n) == 1) || (abs(m_j-m) == 1 && abs(n_j-n) == 0))     % cioe' se (m,n) e' uno stato a N,S,E,W di j
+                                for n = n_j-1 : n_j+1
                                     
-                                    is_neighbour = 1;
+                                    is_neighbour = 0;
                                     
-                                end
-                                
-                                if (is_neighbour == 1)  % caso in cui c'e' vento, quindi mi sposto
-                                    
-                                    % controllo se lo stato in cui vengo spostato
-                                    % e' FREE oppure no
-                                    % devo anche controllare che lo stato in cui
-                                    % finisco abbia o non abbia il pacco a seconda
-                                    % di se lo avevo o no
-                                    
-                                    final_state  = 0;
-                                    pick = 0;
-                                    
-                                    for k = 1 : K    % from m,n to stateSpace index. Cerco nella stateSpace l'indice corrispondente a (m,n). Se non lo trovo vuol dire che e' un TREE o un BORDER
+                                    if ((abs(m_j-m) == 0 && abs(n_j-n) == 1) || (abs(m_j-m) == 1 && abs(n_j-n) == 0))     % cioe' se (m,n) e' uno stato a N,S,E,W di j
                                         
-                                        if (stateSpace(k,1) == m && stateSpace(k,2) == n) %&& stateSpace(k,3) == pack_i)
-                                            %entro qui se la CELLA è ammissibile, con o senza pacco
-                                            
-                                            if ((map(stateSpace(k,1),stateSpace(k,2)) ~= PICK_UP) && stateSpace(k,3) == pack_i) 
-                                                %final state diverso da pick up e hanno lo stesso pacco, quindi tutto come prima
-                                                
-                                                final_state = k;
-                                                
-                                            elseif (map(stateSpace(k,1),stateSpace(k,2)) == PICK_UP && pack_i == 0) 
-                                                %se final state è pick up ma parto senza pacco e arrivo con pacco (caso quindi di pick up 
-                                                %vero e proprio)
-                                                
-                                                final_state = k;
-                                                pick = 1;
-                                      
-                                            end
-                                                                                         
-                                        end
+                                        is_neighbour = 1;
                                         
                                     end
                                     
-                                    if (final_state ~= 0 && pick ~= 1 )   % arrivo in una cella ammissibile ma non sono nel caso pick up
-                                   
-                                        if(Transition_probabilities_matrix(i,final_state,u) == 0) 
-                                            %dovremmo capire perchè ci sovrascrive, senza scrivere questo if paraculo...
+                                    if (is_neighbour == 1)  % caso in cui c'e' vento, quindi mi sposto
+                                        
+                                        % controllo se lo stato in cui vengo spostato
+                                        % e' FREE oppure no
+                                        % devo anche controllare che lo stato in cui
+                                        % finisco abbia o non abbia il pacco a seconda
+                                        % di se lo avevo o no
+                                        
+                                        final_state  = 0;
+                                        pick = 0;
+                                        drop = 0;
+                                        
+                                        for k = 1 : K    % from m,n to stateSpace index. Cerco nella stateSpace l'indice corrispondente a (m,n). Se non lo trovo vuol dire che e' un TREE o un BORDER
                                             
-                                            Transition_probabilities_matrix(i,final_state,u) = 0.25 * P_WIND * (1 - Crashing_probabilities(stateSpace(final_state,1),stateSpace(final_state,2)));
-                                       
+                                            if (stateSpace(k,1) == m && stateSpace(k,2) == n) %&& stateSpace(k,3) == pack_i)
+                                                %entro qui se la CELLA è ammissibile, con o senza pacco
+                                                
+                                                if (stateSpace(k,3) == pack_i)  % && (map(stateSpace(k,1),stateSpace(k,2)) ~= PICK_UP))
+                                                    %final state diverso da pick up e hanno lo stesso pacco, quindi tutto come prima
+                                                    
+                                                    final_state = k;
+                                                    
+                                                elseif (map(stateSpace(k,1),stateSpace(k,2)) == PICK_UP && stateSpace(k,3) == 1 && pack_i == 0)
+                                                    %se final state è pick up ma parto senza pacco (caso quindi di pick up
+                                                    %vero e proprio)
+                                                    
+                                                    final_state = k; %con pacco
+                                                    pick = 1; %devo prendere il pacco
+                                                    
+                                                elseif (map(stateSpace(k,1),stateSpace(k,2)) == DROP_OFF &&stateSpace(k,3) == 0 && pack_i == 1)
+                                                    %se parto da i con pacco e mi trovo sopra la cella drop off
+                                                    
+                                                    final_state = k; %SENZA pacco
+                                                    drop = 1;
+                                                    
+                                                end
+                                                
+                                            end
+                                            
                                         end
                                         
-                                    elseif (pick == 1) 
-                                        %mi trovo nel caso di pick up
-                                        %non metto il controllo su final state ammissibile perchè se pick è 1, 
-                                        %significa che final state è per forza ammissibile
-                                        
-                                        if(Transition_probabilities_matrix(i,final_state,u) == 0) 
-                                            %questo if qui potemmo anche risparmiarcelo perchè lui accede solo a caselle 
-                                            %con lo stesso pacco (vedi riga 101)
-                                      
-                                            Transition_probabilities_matrix(i,final_state,u) = 0.25 * P_WIND * (1 - Crashing_probabilities(stateSpace(final_state,1),stateSpace(final_state,2)));
-                                            Transition_probabilities_matrix(i,final_state-1,u) = 0;
+                                        if (final_state ~= 0 && pick ~= 1 && drop ~= 1 )
+                                            % arrivo in una cella ammissibile ma non sono nel caso pick up nè drop off
                                             
+                                            if(Transition_probabilities_matrix(i,final_state,u) == 0)
+                                                %dovremmo capire perchè ci sovrascrive, senza scrivere questo if paraculo...
+                                                
+                                                Transition_probabilities_matrix(i,final_state,u) = 0.25 * P_WIND * (1 - Crashing_probabilities(stateSpace(final_state,1),stateSpace(final_state,2)));
+                                                
+                                            end
+                                            
+                                        elseif (pick == 1)
+                                            %mi trovo nel caso di pick up
+                                            %non metto il controllo su final state ammissibile perchè se pick è 1,
+                                            %significa che final state è per forza ammissibile
+                                            
+                                            if(Transition_probabilities_matrix(i,final_state,u) == 0)
+                                                %questo if qui potemmo anche risparmiarcelo perchè lui accede solo a caselle
+                                                %con lo stesso pacco (vedi riga 101)
+                                                
+                                                Transition_probabilities_matrix(i,final_state,u) = 0.25 * P_WIND * (1 - Crashing_probabilities(stateSpace(final_state,1),stateSpace(final_state,2)));
+                                                Transition_probabilities_matrix(i,final_state-1,u) = 0;
+                                                
+                                            end
+                                            
+                                        elseif (drop == 1)
+                                            
+                                            if(Transition_probabilities_matrix(i,final_state,u) == 0)
+                                                %come righe sopra
+                                                
+                                                Transition_probabilities_matrix(i,final_state,u) = 0.25 * P_WIND * (1 - Crashing_probabilities(stateSpace(final_state-1,1),stateSpace(final_state-1,2)));
+                                                Transition_probabilities_matrix(i,final_state+1,u) = 0;
+                                                %la prob di andare da i con pacco a drop off con pacco è zero
+                                                
+                                            end
                                         end
-                                    end   
+                                    end
                                 end
                             end
-                        end
+                        end                        
                     end
+                    
+                else %se parto da drop off con pacco
+                    
+                    Transition_probabilities_matrix(i,i,u) = 1;
                 end
+                
+                
+                
             end
         end
+        
     end
 end
 
 
 
 
-for i = 1 : K
+for u = 1 : 5
     
-    for u = 1 : 5
+    for i = 1 : K
         
         sum = 0;
         
         for j = 1 : K
-                
-              if(i ~= 90)
+            
+            if(i ~= base)
                 
                 sum = sum + Transition_probabilities_matrix(i,j,u);
                 
-              end
-            
             end
             
-    end
+        end
         
-    
-        %QUA SICURAMENTE C'E' UN ERRORE, CHE CI PORTA LA PROBABILITA' A 1
-        %QUANDO DOVREBBE ESSERE 0 NEL CASO DI INPUT NON AMMISSIBILI!
-    
-        Transition_probabilities_matrix(i,base,u) = Transition_probabilities_matrix(i,base,u) + (1 - sum);
-        %Ho aggiunto a dx dell'uguale Prob base perchè se sono in una
-        %casella dove VOLONTARIAMENTE decido di andare in base, avrò come
-        %Prob base la somma tra il valore di crash e il valore dello
-        %spostamento volontario. Allora succede che mentre faccio la somma,
-        %mi conta anche il valore dello spostamento volontario e quano poi
-        %faccio 1-somma da mettere in Prob base, andando poi a fare la
-        %somma di tutta la riga, non mi viene più 1, perchè mi sto perdendo
-        %la prob di andare in base volontariamente. Invece aggiungendo
-        %Trans_prob a dx, se non ci vado volontariamente avrò 0 e quindi
-        %amen, ma se ci posso andare volontariamente, la riga torna a
-        %valere 1. CREDO
     end
-end    
+
+        if (sum ~= 0)
+            Transition_probabilities_matrix(i,base,u) = Transition_probabilities_matrix(i,base,u) + (1 - sum);
+            %Ho aggiunto a dx dell'uguale Prob base perchè se sono in una
+            %casella dove VOLONTARIAMENTE decido di andare in base, avrò come
+            %Prob base la somma tra il valore di crash e il valore dello
+            %spostamento volontario. Allora succede che mentre faccio la somma,
+            %mi conta anche il valore dello spostamento volontario e quano poi
+            %faccio 1-somma da mettere in Prob base, andando poi a fare la
+            %somma di tutta la riga, non mi viene più 1, perchè mi sto perdendo
+            %la prob di andare in base volontariamente. Invece aggiungendo
+            %Trans_prob a dx, se non ci vado volontariamente avrò 0 e quindi
+            %amen, ma se ci posso andare volontariamente, la riga torna a
+            %valere 1. CREDO
+        end
+end
+    
     
 P1 = Transition_probabilities_matrix;
 
