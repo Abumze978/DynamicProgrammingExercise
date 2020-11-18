@@ -104,17 +104,17 @@ for i = 1 : K  % prendo il primo stato
         n_j = stateSpace(j,2);  % n_j
         pack_j = stateSpace(j,3);
         
-         %POSSO AVERE UN CAMBIO DI PACCHETTO SE HO UN PACCO E CRASHO
-       
-        if(((m_j == m_i + 1 && n_j == n_i) || (m_j == m_i - 1 && n_j == n_i) || (m_j == m_i && n_j == n_i + 1) || (m_j == m_i && n_j == n_i - 1) || (m_j == m_i && n_j == n_i))) 
-            %entro dentro questo if se j è uno dei quattro vicini di i (o i stesso) 
-
+        %POSSO AVERE UN CAMBIO DI PACCHETTO SE HO UN PACCO E CRASHO
+        
+        if(((m_j == m_i + 1 && n_j == n_i) || (m_j == m_i - 1 && n_j == n_i) || (m_j == m_i && n_j == n_i + 1) || (m_j == m_i && n_j == n_i - 1) || (m_j == m_i && n_j == n_i)))
+            %entro dentro questo if se j è uno dei quattro vicini di i (o i stesso)
+            
             for u = 1 : 5   % fissati i due stati, scorro tutti i control inputs
                 
-                if (i ~= drop_off) 
+                if (i ~= drop_off)
                     
-                    if (pack_i == pack_j)    
-                        % only transitions where the 'package state' is consistent except for the pickup station 
+                    if (pack_i == pack_j)
+                        % only transitions where the 'package state' is consistent except for the pickup station
                         
                         if ((u == NORTH && n_j == n_i + 1 && m_j == m_i) || (u == SOUTH && n_j == n_i - 1 && m_j == m_i) || (u == EAST && m_j == m_i + 1 && n_i == n_j) || (u == WEST && m_j == m_i - 1 && n_i == n_j) || (u == HOVER && m_j == m_i && n_i == n_j))
                             
@@ -165,18 +165,14 @@ for i = 1 : K  % prendo il primo stato
                                         pick = 0;
                                         drop = 0;
                                         count_borders = 0;
+                                        tree = 0;
                                         
                                         for k = 1 : K    % from m,n to stateSpace index. Cerco nella stateSpace l'indice corrispondente a (m,n). Se non lo trovo vuol dire che e' un TREE o un BORDER
                                             
                                             if (stateSpace(k,1) == m && stateSpace(k,2) == n) %&& stateSpace(k,3) == pack_i)
                                                 %entro qui se la CELLA è ammissibile, con o senza pacco
                                                 
-                                                if (stateSpace(k,3) == pack_i)  % && (map(stateSpace(k,1),stateSpace(k,2)) ~= PICK_UP))
-                                                    %final state diverso da pick up e hanno lo stesso pacco, quindi tutto come prima
-                                                    
-                                                    final_state = k;
-                                                    
-                                                elseif (map(stateSpace(k,1),stateSpace(k,2)) == PICK_UP && stateSpace(k,3) == 1 && pack_i == 0)
+                                                if (map(stateSpace(k,1),stateSpace(k,2)) == PICK_UP && stateSpace(k,3) == 1 && pack_i == 0)
                                                     %se final state è pick up ma parto senza pacco (caso quindi di pick up
                                                     %vero e proprio)
                                                     
@@ -186,37 +182,48 @@ for i = 1 : K  % prendo il primo stato
                                                 elseif (map(stateSpace(k,1),stateSpace(k,2)) == DROP_OFF &&stateSpace(k,3) == 0 && pack_i == 1)
                                                     %se parto da i con pacco e mi trovo sopra la cella drop off
                                                     
-                                                    final_state = k; 
+                                                    final_state = k;
                                                     drop = 1;
+                                                    
+                                                elseif (stateSpace(k,3) == pack_i)  % && (map(stateSpace(k,1),stateSpace(k,2)) ~= PICK_UP))
+                                                    %final state diverso da pick up e hanno lo stesso pacco, quindi tutto come prima
+                                                    
+                                                    final_state = k;
                                                     
                                                 end
                                                 
                                             end
                                             
                                         end
-                                      
-                                        if ((m==0 && n == 1) || (m == 0 && n == h) || (m == w+1 && n == 1) || (m == w+1 && n == h)...
-                                            || (m == 1 && n == 0) || (m == w && n == 0) || (m == w && n == h+1) || (m == 1 && n == h+1))
+                                        
+                                        if (final_state == 0 && ((m==0 && n == 1) || (m == 0 && n == h) || (m == w+1 && n == 1) || (m == w+1 && n == h)...
+                                                || (m == 1 && n == 0) || (m == w && n == 0) || (m == w && n == h+1) || (m == 1 && n == h+1)))
                                             %caso spigolo mappa
-                              
+                                            
                                             count_borders = count_borders + 2;
-                                               
-                                        elseif ((m == 0 && n < h && n > 0) || (m == w+1 && n < h && n > 0) || (n == 0 && m < w && m > 0) || (n == h+1 && m < h && m > 0))
+                                            
+                                        elseif (final_state == 0 && ((m == 0 && n < h && n > 0) || (m == w+1 && n < h && n > 0) || (n == 0 && m < w && m > 0) || (n == h+1 && m < h && m > 0)))
                                             %caso bordo laterale mappa
                                             
                                             count_borders = count_borders + 1;
                                             
+                                        elseif (final_state == 0 && map(m,n) == TREE)
+                                            %se mi manda contro un albero
+                                            
+                                            tree = tree + 1;
+                                            
                                         end
-                                      
-                                        if (final_state ~= 0 && pick ~= 1 && drop ~= 1 )
+                                        
+                                        if (final_state ~= 0 && pick == 0 && drop == 0 )
                                             % arrivo in una cella ammissibile ma non sono nel caso pick up nè drop off
                                             
-                                            if(Transition_probabilities_matrix(i,final_state,u) == 0)
-                                                %dovremmo capire perchè ci sovrascrive, senza scrivere questo if paraculo...
+%                                             if(Transition_probabilities_matrix(i,final_state,u) == 0)
+%                                                 %dovremmo capire perchè ci sovrascrive, senza scrivere questo if paraculo...
                                                 
                                                 Transition_probabilities_matrix(i,final_state,u) = 0.25 * P_WIND * (1 - Crashing_probabilities(stateSpace(final_state,1),stateSpace(final_state,2)));
                                                 
-                                            end
+                                                
+%                                             end
                                             
                                         elseif (pick == 1)
                                             %mi trovo nel caso di pick up
@@ -241,31 +248,33 @@ for i = 1 : K  % prendo il primo stato
                                                 Transition_probabilities_matrix(i,final_state+1,u) = 0;
                                                 %la prob di andare da i con pacco a drop off con pacco è zero
                                                 
+                                                
                                             end
                                             
                                         elseif (final_state == 0 && count_borders > 0) %mi sono schiantato su un bordo
                                             
-                                            Transition_probabilities_matrix(i,base,u) = count_borders * 0.25 * P_WIND;
+                                            Transition_probabilities_matrix(i,base,u) = (count_borders * 0.25 * P_WIND);
+                                            
+                                        elseif (final_state == 0 && tree > 0)
+                                            
+                                            Transition_probabilities_matrix(i,base,u) = Transition_probabilities_matrix(i,base,u) + tree * 0.25 * P_WIND;
                                             
                                         end
+                                        
                                     end
                                 end
                             end
+                            
+                            %qui dovrei avere il numero giusto di alberi
+                            
                         end
-%                     elseif (pack_j == 1 && j == base) 
-%                        %caso in cui parto con pacco e crasho = vado in base
-%                     
-%                        Transition_probabilities_matrix(i,j,u) = 0.25 * P_WIND * (1 - Crashing_probabilities(
-                        
                     end
                     
                 else %se parto da drop off con pacco
                     
                     Transition_probabilities_matrix(i,i,u) = 1;
+                    
                 end
-                
-                
-                
             end
         end
         
