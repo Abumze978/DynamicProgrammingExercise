@@ -144,31 +144,34 @@ end
             
             for j = 1 : K
                 
-                if(P1(i,j,u) ~= P(i,j,u) && i == 90)
+                if(P1(i,j,u) ~= P(i,j,u)) % && mod(i,2) ~= 0 && i ~= size(map,1) && j ~= size(map,2) )
                     
                     counter = counter + 1;
                     errors = [errors ;
                                i,j,u];
                     
-                    disp('noi');
-                    P1(i,j,u) 
-                    disp('loro');
-                    P(i,j,u)
+%                     disp('noi');
+%                     P1(i,j,u) 
+%                     disp('loro');
+%                     P(i,j,u)
                     
                 end
             end
         end
      end
     
-    disp('errors = ');
-    disp(errors);
+%     disp('errors = ');
+%     disp(errors);
     disp('num errori ancora presenti = ');
     disp(counter);
 
+     
 % disp('loro');
-% P(88,89,NORTH)
+% P(420,137,EAST)
 % disp('noi');
-% P1(88,89,NORTH)
+% P1(420,137,EAST)
+
+
 
 %% Compute stage costs
 if stageCostsImplemented 

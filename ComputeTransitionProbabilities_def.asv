@@ -239,7 +239,7 @@ for i = 1 : K  % prendo il primo stato
                                                 
                                             end
                                             
-                                        elseif (final_state == 0 && count_borders > 0) %mi sono schiantato su un bordo
+                                        elseif (count_borders > 0) %mi sono schiantato su un bordo
                                             
                                             Transition_probabilities_matrix(i,base,u) = count_borders * 0.25 * P_WIND;
                                             
