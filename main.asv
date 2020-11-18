@@ -138,7 +138,7 @@ end
  counter = 0;
  errors = [];
     
-     for u = 1 : 5
+     for i = 1 : 5
         
         for i = 1 : K
             
@@ -168,8 +168,8 @@ end
 % P1(451,441,HOVER)
 % P1(451,137,HOVER)
 
-P(392,137,HOVER)
-P1(392,137,HOVER)
+P(2,137,NORTH)
+P1(2,137,NORTH)
 % P1(476,:,HOVER)
 
 

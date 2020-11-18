@@ -324,7 +324,7 @@ end
     
     
 P1 = Transition_probabilities_matrix;
-sum(476,5)
+
 
 
 % P(307,:,HOVER)
