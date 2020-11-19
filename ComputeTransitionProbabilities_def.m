@@ -1,4 +1,4 @@
-function P1 = ComputeTransitionProbabilities_def(stateSpace, map)
+function P = ComputeTransitionProbabilities_def(stateSpace, map)
 %COMPUTE_TRANSITION_PROBABILITIES Compute transition probabilities.
 %
 %   P = ComputeTransitionProbabilities(stateSpace, map) 
@@ -286,7 +286,7 @@ for i = 1 : K
 
     for u = 1 : 5
         
-        sum = zeros(K,5);
+        sum = zeros(K,5); %QUESTO DOVREBBE ANDARE FUORI DAI FOR NO? FUNZIONA LO STESSO MA COSI INIZIALIZZI A ZERO LA MATRICE OGNI VOLTA INUTILMENTE
         
         for j = 1 : K 
             
@@ -321,9 +321,8 @@ for i = 1 : K
         end
     end
 end
-    
-    
-P1 = Transition_probabilities_matrix;
+
+P = Transition_probabilities_matrix;
 
 
 

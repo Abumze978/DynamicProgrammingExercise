@@ -87,7 +87,7 @@ K=size(stateSpace,1); %numero di righe della stateSpace
 
 %% Set the following to true as you progress with the files
 transitionProbabilitiesImplemented = true;
-stageCostsImplemented = false;
+stageCostsImplemented = true;
 valueIterationImplemented = false; 
 policyIterationImplemented = false;
 linearProgrammingImplemented = false;
@@ -108,9 +108,9 @@ if transitionProbabilitiesImplemented
     % to state j if control input l is applied.
     
     % TODO: Question b)
-    P1 = ComputeTransitionProbabilities_def(stateSpace, map);
+    P = ComputeTransitionProbabilities_def(stateSpace, map);
     
- load('example_P.mat');
+%  load('example_P.mat');
  
 
 %questo pezzo di codice mi stampa prima la probabilità di andare in base
@@ -133,49 +133,48 @@ if transitionProbabilitiesImplemented
 %     end
 %         
 %     disp(contatore);
+% end
+% 
+%  counter = 0;
+%  errors = [];
+%     
+%      for u = 1 : 5
+%         
+%         for i = 1 : K
+%             
+%             for j = 1 : K
+%                 
+%                 if(abs(P1(i,j,u) - P(i,j,u)) > 0.00001) %~=
+%                     
+%                     counter = counter + 1;
+%                     errors = [errors ;
+%                                i,j,u];
+%                     
+%                 end
+%             end
+%         end
+%      end
+%     
+%     disp('errors = ');
+%     disp(errors);
+%     disp('num errori ancora presenti = ');
+%     disp(counter);
+% P1(1,137,2)
+% 
+% % P(451,137,HOVER)
+% % P1(451,451,HOVER)
+% % P1(451,453,HOVER)
+% % P1(451,449,HOVER)
+% % P1(451,441,HOVER)
+% % P1(451,137,HOVER)
+% 
+% % P1(169,137,EAST)
+% % % P1(476,:,HOVER)
+
+
+
+
 end
-
- counter = 0;
- errors = [];
-    
-     for u = 1 : 5
-        
-        for i = 1 : K
-            
-            for j = 1 : K
-                
-                if(abs(P1(i,j,u) - P(i,j,u)) > 0.00001) %~=
-                    
-                    counter = counter + 1;
-                    errors = [errors ;
-                               i,j,u];
-                    
-                end
-            end
-        end
-     end
-    
-    disp('errors = ');
-    disp(errors);
-    disp('num errori ancora presenti = ');
-    disp(counter);
-
-
-% P(451,137,HOVER)
-% P1(451,451,HOVER)
-% P1(451,453,HOVER)
-% P1(451,449,HOVER)
-% P1(451,441,HOVER)
-% P1(451,137,HOVER)
-
-P(392,137,HOVER)
-P1(392,137,HOVER)
-% P1(476,:,HOVER)
-
-
-
-
-
 %% Compute stage costs
 if stageCostsImplemented 
     disp('Compute stage costs');
@@ -185,7 +184,32 @@ if stageCostsImplemented
     % represents the cost if we are in state i and apply control input l.
     
     % TODO: Question c)
-    G = ComputeStageCosts(stateSpace, map);
+    G1 = ComputeStageCosts_Alby(stateSpace, map);
+    load('example_G.mat');
+    
+    counter = 0;
+    
+    for i = 1 : K
+        
+        for u = 1 : 5
+            
+            if(abs(G1(i,u) - G(i,u)) > 0.00001)
+                
+                disp(i)
+                disp(u)
+                disp(G(i,u))
+                disp(G1(i,u))
+                disp('-')
+                counter = counter + 1;
+            end
+            
+        end
+        
+    end
+    
+    disp('Numero errori');
+    disp(counter);
+    
 end
 
 %% Solve stochastic shortest path problem
