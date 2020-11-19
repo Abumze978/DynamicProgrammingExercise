@@ -144,7 +144,7 @@ end
             
             for j = 1 : K
                 
-                if(P1(i,j,u) ~= P(i,j,u))
+                if(abs(P1(i,j,u) - P(i,j,u)) > 0.00001) %~=
                     
                     counter = counter + 1;
                     errors = [errors ;
