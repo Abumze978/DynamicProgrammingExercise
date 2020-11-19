@@ -60,9 +60,9 @@ end
 
 Crashing_probabilities = zeros(size(map,1) + 2,size(map,2) + 2);
 
-for m = 2 : size(map,1) - 1
+for m = 2 : size(map,1) + 1
     
-    for n = 2 : size(map,2) - 1
+    for n = 2 : size(map,2) + 1
         
         if(map(m - 1,n - 1) == TREE)
             
