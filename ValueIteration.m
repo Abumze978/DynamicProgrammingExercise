@@ -42,31 +42,94 @@ global TERMINAL_STATE_INDEX
 J_opt = zeros(K,1);
 u_opt_ind = zeros(K,1);
 
-%vettore dei costi Vl, sarà una matrice K x l, dove l indica il numero di
-%iterazioni che faremo 
-V = [];
+%matrice dei costi Vl, sarà una matrice K x 2, tengo conto solo delle
+%ultime due iterazioni per fare il controllo tra l'attuale e la precedente,
+%delle altre non mi importa più
+V = zeros(K,2);
 
-%inizializzo V0 (credo vada bene metterli tutti a zero...)
-V0 = zeros(5,1);
+%inizializzo V0 con valori random
+V(:,1) = randn;
 
-for i = 1 : K
+finish = 0;
+
+% %input che mi da il costo minimo per lo stato i (
+% u_min = zeros(K,1);
+
+%Se i valori sono ancora diversi tra loro faccio un'altra iterazione
+while (finish < K)
     
-    %per tenere traccia dei 5 valori che otterrò durante la minimizzazione
-    Vmin = zeros(5,1);
-   
-    for u = 1 : 5
+    for i = 1 : K
         
-        Prob = 0;
-       
-        for j = 1 : K 
-           
-            Prob = Prob + P(i,j,u)*V(j);
+        %per tenere traccia dei 5 valori che otterrò durante la minimizzazione
+        V_u = zeros(5,1);
+        
+        for u = 1 : 5
+            
+            Prob = 0;
+            
+            for j = 1 : K
+                
+                Prob = Prob + P(i,j,u)*V(j,1);
+                
+            end
+            
+            V_u(u) = G(i,u) + Prob;
+            
+        end
+        
+        %variabile che mi tiene traccia del minimo valore dei 5 input e a
+        %quale input corrisponde
+        Vmin = inf;
+        
+        for u = 1 : 5
+            
+            if (V_u(u) < Vmin)
+                
+                Vmin = V_u(u);
+                u_opt_ind(i) = u;
+                
+            end
+            
+        end
+        
+        V(i,2) = Vmin;
+        
+    end
+    
+    %controllo che i costi siano diversi tra di loro abbastanza
+    for i = 1 : K
+        
+        if (V(i,1) - V(i,2) < 0.00001)
+            
+            %mi fermo se tutti i valori sono uguali, quindi finish deve essere
+            %K prima di fermarmi
+            finish = finish + 1;
             
         end
         
     end
     
+    %se non mi devo fermare, sposto tutti i valori della seconda colonna
+    %nella prima e azzero la seconda
+    if (finish < K)
+       
+        for i = 1 : K
+           
+            V(i,1) = V(i,2);
+            V(i,2) = 0;
+            
+        end
+        
+    end
+   
 end
+
+if  (finish == K)
+    
+    J_opt(i,1) = V(i,2);
+    
+end
+
 
 
 

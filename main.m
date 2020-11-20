@@ -88,7 +88,7 @@ K=size(stateSpace,1); %numero di righe della stateSpace
 %% Set the following to true as you progress with the files
 transitionProbabilitiesImplemented = true;
 stageCostsImplemented = true;
-valueIterationImplemented = false; 
+valueIterationImplemented = true; 
 policyIterationImplemented = false;
 linearProgrammingImplemented = false;
 
@@ -207,8 +207,8 @@ if stageCostsImplemented
         
     end
     
-    disp('Numero errori');
-    disp(counter);
+%     disp('Numero errori');
+%     disp(counter);
     
 end
 
