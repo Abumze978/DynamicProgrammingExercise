@@ -193,7 +193,7 @@ if stageCostsImplemented
         
         for u = 1 : 5
             
-            if(abs(G1(i,u) - G(i,u)) > 0.00001)
+            if(abs(G1(i,u) - G(i,u)) > 0.0000001)
                 
                 disp(i)
                 disp(u)
