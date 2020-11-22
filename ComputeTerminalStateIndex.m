@@ -36,4 +36,7 @@ for k = 1 : K
         stateIndex = k;
         break
     end
+    
+end
+
 end

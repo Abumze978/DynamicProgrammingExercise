@@ -110,7 +110,7 @@ if transitionProbabilitiesImplemented
     % TODO: Question b)
     P = ComputeTransitionProbabilities_def(stateSpace, map);
     
-%  load('example_P.mat');
+ load('example_P.mat');
  
 
 %questo pezzo di codice mi stampa prima la probabilità di andare in base
@@ -144,7 +144,7 @@ if transitionProbabilitiesImplemented
 %             
 %             for j = 1 : K
 %                 
-%                 if(abs(P1(i,j,u) - P(i,j,u)) > 0.00001) %~=
+%                 if(abs(P1(i,j,u) - P(i,j,u)) > 0.000000000000001) %~=
 %                     
 %                     counter = counter + 1;
 %                     errors = [errors ;
@@ -219,7 +219,7 @@ if valueIterationImplemented
     disp('Solve stochastic shortest path problem with Value Iteration');
     
     % TODO: Question d)
-    [ J_opt_vi, u_opt_ind_vi ] = ValueIteration(P, G);
+    [ J_opt_vi, u_opt_ind_vi ] = ValueIteration_prova(P, G);
     
     if size(J_opt_vi,1)~=K || size(u_opt_ind_vi,1)~=K
         disp('[ERROR] the size of J and u must be K')
