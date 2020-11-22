@@ -89,7 +89,7 @@ K=size(stateSpace,1); %numero di righe della stateSpace
 transitionProbabilitiesImplemented = true;
 stageCostsImplemented = true;
 valueIterationImplemented = true; 
-policyIterationImplemented = false;
+policyIterationImplemented = true;
 linearProgrammingImplemented = false;
 
 %% Compute the terminal state index
@@ -229,7 +229,7 @@ if policyIterationImplemented
     disp('Solve stochastic shortest path problem with Policy Iteration');
     
     % TODO: Question d)
-    [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration(P, G);
+    [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration_Leo(P, G);
     
     if size(J_opt_pi,1)~=K || size(u_opt_ind_pi,1)~=K
         disp('[ERROR] the size of J and u must be K')
