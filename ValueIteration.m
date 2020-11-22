@@ -64,40 +64,40 @@ while (finish < K-1)
         
         if (i ~= terminal_state)
         
-        %per tenere traccia dei 5 valori che otterrò durante la minimizzazione
-        V_u = zeros(5,1);
-        
-        for u = 1 : 5
-            
-            Prob = 0;
-            
-            for j = 1 : K
-                
-                Prob = Prob + P(i,j,u)*V(j,1);
-                
+            %per tenere traccia dei 5 valori che otterrò durante la minimizzazione
+            V_u = zeros(5,1);
+
+            for u = 1 : 5
+
+                Prob = 0;
+
+                for j = 1 : K
+
+                    Prob = Prob + P(i,j,u)*V(j,1);
+
+                end
+
+                V_u(u) = G(i,u) + Prob;
+
             end
-            
-            V_u(u) = G(i,u) + Prob;
-            
-        end
-        
-        %variabile che mi tiene traccia del minimo valore dei 5 input e a
-        %quale input corrisponde
-        Vmin = Inf;
-        
-        for u = 1 : 5
-            
-            if (V_u(u) < Vmin)
-                
-                Vmin = V_u(u);
-                u_opt_ind1(i) = u;
-                
+
+            %variabile che mi tiene traccia del minimo valore dei 5 input e a
+            %quale input corrisponde
+            Vmin = Inf;
+
+            for u = 1 : 5
+
+                if (V_u(u) < Vmin)
+
+                    Vmin = V_u(u);
+                    u_opt_ind1(i) = u;
+
+                end
+
             end
-            
-        end
-        
-        V(i,2) = Vmin;
-        
+
+            V(i,2) = Vmin;
+
         end
     end
     
@@ -106,13 +106,13 @@ while (finish < K-1)
         
         if (i ~= terminal_state)
         
-        if (V(i,1) - V(i,2) < 0.00001)
-            
-            %mi fermo se tutti i valori sono uguali, quindi finish deve essere
-            %K-1 prima di fermarmi
-            finish = finish + 1;
-            
-        end
+            if (V(i,1) - V(i,2) < 0.00001)
+
+                %mi fermo se tutti i valori sono uguali, quindi finish deve essere
+                %K-1 prima di fermarmi
+                finish = finish + 1;
+
+            end
         
         end
         

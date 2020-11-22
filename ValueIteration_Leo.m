@@ -1,4 +1,4 @@
-function [ J_opt1, u_opt_ind1 ] = ValueIteration_prova(P, G)
+function [ J_opt1, u_opt_ind1 ] = ValueIteration(P, G)
 %VALUEITERATION Value iteration
 %   Solve a stochastic shortest path problem by Value Iteration.
 %
@@ -38,7 +38,6 @@ global TERMINAL_STATE_INDEX
 
 terminal_state = TERMINAL_STATE_INDEX;
 
-
 J_opt1 = zeros(K,1);
 u_opt_ind1 = zeros(K,1);
 
@@ -51,9 +50,6 @@ u_opt_ind1(terminal_state) = HOVER;
 %delle altre non mi importa più
 V = zeros(K,2);
 
-%inizializzo V0 con valori random
-V(:,1) = randn;
-
 finish = 0;
 
 %Se i valori sono ancora diversi tra loro faccio un'altra iterazione
@@ -64,17 +60,17 @@ while (finish < K-1)
         if (i ~= terminal_state)
         
             %per tenere traccia dei 5 valori che otterrò durante la minimizzazione
-            V_u = zeros(4,1);
+            V_u = zeros(5,1);
 
-            for u = 1 : 4
+            for u = 1 : 5
 
                 Prob = 0;
 
-                for j = 1 : K
+                    for j = 1 : K
 
-                    Prob = Prob + P(i,j,u)*V(j,1);
+                        Prob = Prob + P(i,j,u)*V(j,1);
 
-                end
+                    end
 
                 V_u(u) = G(i,u) + Prob;
 
@@ -84,7 +80,7 @@ while (finish < K-1)
             %quale input corrisponde
             Vmin = Inf;
 
-            for u = 1 : 4
+            for u = 1 : 5
 
                 if (V_u(u) < Vmin)
 
@@ -117,38 +113,33 @@ while (finish < K-1)
         
     end
     
-    %se non mi devo fermare, sposto tutti i valori della seconda colonna
-    %nella prima e azzero la seconda
-    if (finish < K-1)
-       
-        for i = 1 : K
-            
-            if (i ~=terminal_state)
-           
-            V(i,1) = V(i,2);
-            V(i,2) = 0;
-            
-            end
-            
-        end
+    V(:,1) = V(:,2);
+    V(:,2) = 0;
+    
+%     % MODIFICA
+%     for i = 1 : K
+% 
+%         if (i ~=terminal_state)
+% 
+%             V(i,1) = V(i,2);
+%             V(i,2) = 0;
+% 
+%         end
+% 
+%     end
         
-    end
-   
 end
 
-if  (finish == K-1)
-    
-    for i = 1 : K
+for i = 1 : K
         
-        if (i ~= terminal_state)
-    
-        J_opt1(i,1) = V(i,2);
-        
-        end
-    
+    if (i ~= terminal_state)
+
+        J_opt1(i,1) = V(i,1);
+
     end
-    
+
 end
+    
 
 J_opt = J_opt1;
 u_opt_ind = u_opt_ind1;

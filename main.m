@@ -219,7 +219,7 @@ if valueIterationImplemented
     disp('Solve stochastic shortest path problem with Value Iteration');
     
     % TODO: Question d)
-    [ J_opt_vi, u_opt_ind_vi ] = ValueIteration_prova(P, G);
+    [ J_opt_vi, u_opt_ind_vi ] = ValueIteration_Leo(P, G);
     
     if size(J_opt_vi,1)~=K || size(u_opt_ind_vi,1)~=K
         disp('[ERROR] the size of J and u must be K')
