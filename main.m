@@ -28,7 +28,7 @@ generateRandomWorld = false;
 % Plotting options
 global PLOT_POLICY PLOT_COST
 PLOT_POLICY = true;
-PLOT_COST = false;
+PLOT_COST = true;
 
 %% Global problem parameters
 % IMPORTANT: Do not add or remove any global parameter in main.m
@@ -90,7 +90,8 @@ transitionProbabilitiesImplemented = true;
 stageCostsImplemented = true;
 valueIterationImplemented = true; 
 policyIterationImplemented = true;
-linearProgrammingImplemented = false;
+linearProgrammingImplemented = true;
+
 
 %% Compute the terminal state index
 global TERMINAL_STATE_INDEX
@@ -109,70 +110,6 @@ if transitionProbabilitiesImplemented
     
     % TODO: Question b)
     P = ComputeTransitionProbabilities_def(stateSpace, map);
-    
- load('example_P.mat');
- 
-
-%questo pezzo di codice mi stampa prima la probabilità di andare in base
-%calcolata da un generico i con un generico u dell'esempio e poi quella
-%calcolata dal nostro algoritmo. Ad ogni iterazione ci accorgiamo che
-%quando ci sono calcoli da fare il nostro algoritmo ci azzecca ma a volte
-%mette degli 1 quando ci sarebbero degli zero
-
-% contatore = 0;
-%     for i = 1 : K
-%             
-%             for u = 1 : 5
-%                 
-%                 disp(P(i,137,u));
-%                 disp(P1(i,137,u));
-%                 contatore = contatore + 1;
-%         
-%             end
-%             
-%     end
-%         
-%     disp(contatore);
-% end
-% 
-%  counter = 0;
-%  errors = [];
-%     
-%      for u = 1 : 5
-%         
-%         for i = 1 : K
-%             
-%             for j = 1 : K
-%                 
-%                 if(abs(P1(i,j,u) - P(i,j,u)) > 0.000000000000001) %~=
-%                     
-%                     counter = counter + 1;
-%                     errors = [errors ;
-%                                i,j,u];
-%                     
-%                 end
-%             end
-%         end
-%      end
-%     
-%     disp('errors = ');
-%     disp(errors);
-%     disp('num errori ancora presenti = ');
-%     disp(counter);
-% P1(1,137,2)
-% 
-% % P(451,137,HOVER)
-% % P1(451,451,HOVER)
-% % P1(451,453,HOVER)
-% % P1(451,449,HOVER)
-% % P1(451,441,HOVER)
-% % P1(451,137,HOVER)
-% 
-% % P1(169,137,EAST)
-% % % P1(476,:,HOVER)
-
-
-
 
 end
 %% Compute stage costs
@@ -184,32 +121,8 @@ if stageCostsImplemented
     % represents the cost if we are in state i and apply control input l.
     
     % TODO: Question c)
-    G1 = ComputeStageCosts_Alby(stateSpace, map);
-    load('example_G.mat');
-    
-    counter = 0;
-    
-    for i = 1 : K
-        
-        for u = 1 : 5
-            
-            if(abs(G1(i,u) - G(i,u)) > 0.0000001)
-                
-                disp(i)
-                disp(u)
-                disp(G(i,u))
-                disp(G1(i,u))
-                disp('-')
-                counter = counter + 1;
-            end
-            
-        end
-        
-    end
-    
-%     disp('Numero errori');
-%     disp(counter);
-    
+    G = ComputeStageCosts(stateSpace, map);
+      
 end
 
 %% Solve stochastic shortest path problem
@@ -219,7 +132,8 @@ if valueIterationImplemented
     disp('Solve stochastic shortest path problem with Value Iteration');
     
     % TODO: Question d)
-    [ J_opt_vi, u_opt_ind_vi ] = ValueIteration_Leo(P, G);
+
+    [ J_opt_vi, u_opt_ind_vi ] = ValueIteration(P, G);
     
     if size(J_opt_vi,1)~=K || size(u_opt_ind_vi,1)~=K
         disp('[ERROR] the size of J and u must be K')
@@ -238,12 +152,13 @@ end
 if linearProgrammingImplemented
     disp('Solve stochastic shortest path problem with Linear Programming');
     
-    % TODO: Question d)
+    %TODO: Question d)
     [ J_opt_lp, u_opt_ind_lp ] = LinearProgramming(P, G);
     
     if size(J_opt_lp,1)~=K || size(u_opt_ind_lp,1)~=K
         disp('[ERROR] the size of J and u must be K')
     end
+  
 end
 
 %% Plot results
