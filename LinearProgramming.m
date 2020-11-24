@@ -50,106 +50,185 @@ for i = 1 : K
      end
          
 end
-
-
-
+%NUOVA SOLUZIONE CHE ELIMINA DA MATRICE A E DA VETTORE Q GLI INGRESSI NON
+%AMMISSIBILI COM'E' GIUSTO CHE SIA, MA LA LINPROG MI DA' CHE E' UNBOUNDED
 
 % Definisco matrice A costruita su cinque strati, uno per ogni ingresso
-A = zeros(K*5 ,K);
+% senza input non ammissibili e senza terminal state
+% Ad ogni iterazione aggiungo una riga alla matrice A
+
+A = [];
 
 for u = 1 : 5
     
     for i = 1 : K
+        
+        if(i ~= TERMINAL_STATE_INDEX) 
 
-        i_temp = i + K * (u-1);
+            sum = 0;
 
-        for j = 1 : K 
-            
-%             j_temp = j * u;
-            
-            if(i ~= TERMINAL_STATE_INDEX)
+            for j = 1 : K  %controllo ammissibilità input. Input non è ammissibile se lungo j somma a zero
 
-                A(i_temp,j) = - P(i,j,u);
+               sum = sum + P(i,j,u);
 
-                if(i == j) %diagonale
-                    
-                    A(i_temp,j) = A(i_temp,j) + 1;  
+            end
+
+            if(sum == 0)
+
+                %do nothing
+
+            else %se l'input è ammissibile allora aggiungo ad A un vettore riga con le probabilità 
+
+                P_vector = zeros(1,K);
+
+                for k = 1 : K
+
+                    if(k == i)  %diagonale
+
+                        P_vector(1,k) = 1 - P(i,k,u);
+
+                    else
+
+                        P_vector(1,k) = - P(i,k,u);
+
+                    end
 
                 end
-                
-            end
-            
-        end
 
+                A = [A;
+                    P_vector];
+
+            end
+        
+        end
+        
     end
     
 end
 
+% Definisco vettore Q che è lo "srotolamento" di G senza i costi infiniti e
+% senza terminal state 
 
-% Definisco vettore Q che è lo "srotolamento" di G
-
-Q = zeros(K*5,1);
+Q = [];
 
 for u = 1 : 5
     
     for i = 1 : K
         
-        i_temp = i + K*(u-1);
+        %non aggiungo i costi infiniti(corrispondenti a input non ammissibili)
+        %e non considero il terminal state
+        if(G(i,u) == Inf || i == TERMINAL_STATE_INDEX)  
+            
+            %do nothing
+            
+        else
+            
+            Q = [Q;
+                G(i,u)];
         
-        if(G(i,u) ~= Inf) %inf mi dava problemi. Non dovrebbe essere sbagliato eliminarlo 
-%                           del tutto visto che moltiplicando
-%                           per P la riga dovrebbe fare zero e quindi
-%                           soddisfare il vincolo
-            
-            Q(i_temp,1) = G(i,u);
-            
         end
-        
+            
     end
-    
-end
+        
+end   
+
+% VECCHIA SOLUZIONE, CHE DAVA UN RISULTATO DEL CAZZO MA ALMENO DAVA UN
+% RISULTATO!
+% 
+% % Definisco matrice A costruita su cinque strati, uno per ogni ingresso
+% A = zeros(K*5 ,K);
+% 
+% for u = 1 : 5
+%     
+%     for i = 1 : K
+% 
+%         i_temp = i + K * (u-1);
+% 
+%         for j = 1 : K 
+%             
+% %             j_temp = j * u;
+%             
+%             if(i ~= TERMINAL_STATE_INDEX)
+% 
+%                 A(i_temp,j) = - P(i,j,u);
+% 
+%                 if(i == j) %diagonale
+%                     
+%                     A(i_temp,j) = A(i_temp,j) + 1;  
+% 
+%                 end
+%                 
+%             end
+%             
+%         end
+% 
+%     end
+%     
+% end
+% 
+% 
+% % Definisco vettore Q che è lo "srotolamento" di G
+% 
+% Q = zeros(K*5,1);
+% 
+% for u = 1 : 5
+%     
+%     for i = 1 : K
+%         
+%         i_temp = i + K*(u-1);
+%         
+%         if(G(i,u) ~= Inf) %inf mi dava problemi. Non dovrebbe essere sbagliato eliminarlo 
+% %                           del tutto visto che moltiplicando
+% %                           per P la riga dovrebbe fare zero e quindi
+% %                           soddisfare il vincolo
+%             
+%             Q(i_temp,1) = G(i,u);
+%             
+%         end
+%         
+%     end
+%     
+% end
 
 J_opt = linprog(f,A,Q);
 
+
 u_opt_ind = zeros(K,1);
 
-J = zeros(K*5,1);
+for i = 1 : K
+    
+    if(i == TERMINAL_STATE_INDEX)
+        
+        u_opt_ind(i) = HOVER;
+        
+    else
+    
+        min = Inf;
+        index_min = 0;
+    
+        for u = 1 : 5
 
-for u = 1 : 5
+            sum = 0;
 
-    for i = 1 : K
-
-            i_temp = i + K * (u-1);
-            
-            prob = 0;
-            
             for j = 1 : K
-                
-                prob = prob + P(i,j,u)* J_opt(j);
-                
+
+                sum = sum + P(i,j,u) * J_opt(j);
+
             end
-            
-            J(i_temp,1) =  G(i,u) + prob;
 
-    end
-    
-end
+            if((sum + G(i,u)) < min)
 
-for u = 1 : 5
-    
-    for i = 1 : K
-        
-        i_temp = i + K *(u-1);
-        
-        if(abs(J_opt(i,1) - J(i_temp,1)) < 0.00001)
-            
-            u_opt_ind(i,1) = u;
-            
+                min = sum + G(i,u);
+
+                index_min = u;
+
+            end
+
         end
-        
+
+        u_opt_ind(i) = index_min;
+
     end
-    
-end
 
 end
 

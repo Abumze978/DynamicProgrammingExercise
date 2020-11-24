@@ -86,14 +86,11 @@ global K
 K=size(stateSpace,1); %numero di righe della stateSpace
 
 %% Set the following to true as you progress with the files
-transitionProbabilitiesImplemented = false;
-stageCostsImplemented = false;
+transitionProbabilitiesImplemented = true;
+stageCostsImplemented = true;
 valueIterationImplemented = true; 
 policyIterationImplemented = true;
 linearProgrammingImplemented = true;
-
-load('example_P');
-load('example_G');
 
 %% Compute the terminal state index
 global TERMINAL_STATE_INDEX
@@ -111,7 +108,9 @@ if transitionProbabilitiesImplemented
     % to state j if control input l is applied.
     
     % TODO: Question b)
+ 
     P = ComputeTransitionProbabilities_def(stateSpace, map);
+
 
 end
 %% Compute stage costs
@@ -125,6 +124,7 @@ if stageCostsImplemented
     % TODO: Question c)
     G = ComputeStageCosts(stateSpace, map);
       
+   
 end
 
 %% Solve stochastic shortest path problem
