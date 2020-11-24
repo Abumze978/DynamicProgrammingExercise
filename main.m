@@ -86,12 +86,14 @@ global K
 K=size(stateSpace,1); %numero di righe della stateSpace
 
 %% Set the following to true as you progress with the files
-transitionProbabilitiesImplemented = true;
-stageCostsImplemented = true;
+transitionProbabilitiesImplemented = false;
+stageCostsImplemented = false;
 valueIterationImplemented = true; 
 policyIterationImplemented = true;
 linearProgrammingImplemented = true;
 
+load('example_P');
+load('example_G');
 
 %% Compute the terminal state index
 global TERMINAL_STATE_INDEX
