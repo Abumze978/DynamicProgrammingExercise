@@ -28,7 +28,7 @@ generateRandomWorld = false;
 % Plotting options
 global PLOT_POLICY PLOT_COST
 PLOT_POLICY = true;
-PLOT_COST = true;
+PLOT_COST = false;
 
 %% Global problem parameters
 % IMPORTANT: Do not add or remove any global parameter in main.m
@@ -90,7 +90,7 @@ transitionProbabilitiesImplemented = true;
 stageCostsImplemented = true;
 valueIterationImplemented = true; 
 policyIterationImplemented = true;
-linearProgrammingImplemented = true;
+linearProgrammingImplemented = false;
 
 %% Compute the terminal state index
 global TERMINAL_STATE_INDEX
@@ -145,7 +145,7 @@ if policyIterationImplemented
     disp('Solve stochastic shortest path problem with Policy Iteration');
     
     % TODO: Question d)
-    [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration_Leo(P, G);
+    [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration_Leo2(P, G);
     
     if size(J_opt_pi,1)~=K || size(u_opt_ind_pi,1)~=K
         disp('[ERROR] the size of J and u must be K')

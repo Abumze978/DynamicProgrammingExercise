@@ -69,21 +69,82 @@ stop = 0;
 while (stop < K-1)
 
     % POLICY EVALUATION
-
+    
+    cost_vector = zeros(K,1);
     for i = 1:K
-        if i ~= terminal_state
-
-            Prob1 = 0;
-            for j = 1:K
-
-               Prob1 = Prob1 + P(i,j,mu_h(i))*J_compare(j,2); 
-
+        cost_vector(i) = G(1,mu_h(i));
+    end
+    
+    prob_matrix = zeros(K,K);
+    for r = 1:K
+        for c = 1:K
+            if r ~= c
+                prob_matrix(r,c) = -P(r,c,mu_h(r));
+            else
+                prob_matrix(r,c) = 1;
             end
-
-            J_compare(i,2) = G(i,mu_h(i)) + Prob1;
-
         end
     end
+    
+    J_compare(:,2) = linsolve(prob_matrix, cost_vector);
+
+% PRIMO MODO
+%     J_sym = sym('j_%d',[1 K]);
+%     
+%     eq_vector = [];
+%     
+%     for i = 1:K
+%         if i ~= terminal_state
+%             
+%             Prob1 = 0;
+%             for j = 1:K
+% 
+%                Prob1 = Prob1 + P(i,j,mu_h(i))*J_sym(j); 
+% 
+%             end
+% 
+%             J_sym(i) = G(i,mu_h(i)) + Prob1;
+%             
+%             eq_vector = [eq_vector J_sym(i)];
+%             
+%         else
+%             
+%             J_sym(i) = 0;
+%             
+%         end
+%     end
+%     
+%     % alla fine di questo for ho un linear system di K-1 equazioni lineari
+%     
+%     J_pe = solve(eq_vector, J_sym);
+%     
+%     for i = 1:K
+%         if i ~= terminal_state
+%             J_compare(i,2) = J_pe.J_sym(i);
+%         else
+%             J_compare(i,2) = 0;
+%         end
+%     end
+    
+% SECONDO MODO
+%     for i = 1:K
+%         if i ~= terminal_state
+% 
+%             Prob1 = 0;
+%             for j = 1:K
+%                 
+%                 if (j ~= i)
+% 
+%                     Prob1 = Prob1 + P(i,j,mu_h(i))*J_compare(j,2);
+%                     
+%                 end
+% 
+%             end
+% 
+%             J_compare(i,2) = (G(i,mu_h(i)) + Prob1)/(1 - P(i,i,mu_h(i)));
+% 
+%         end
+%     end
 
     % POLICY IMPROVEMENT
     
@@ -112,7 +173,6 @@ while (stop < K-1)
 
                     J_min = J_to_min(u);
                     mu_h(i) = u;
-                    
                 end
             end
 
