@@ -1,4 +1,4 @@
-function [ J_opt1, u_opt_ind1 ] = ValueIteration(P, G)
+function [ J_opt, u_opt_ind ] = ValueIteration(P, G)
 %VALUEITERATION Value iteration
 %   Solve a stochastic shortest path problem by Value Iteration.
 %
@@ -39,7 +39,6 @@ global TERMINAL_STATE_INDEX
 terminal_state = TERMINAL_STATE_INDEX;
 
 
-
 J_opt1 = zeros(K,1);
 u_opt_ind1 = zeros(K,1);
 
@@ -53,7 +52,7 @@ u_opt_ind1(terminal_state) = HOVER;
 V = zeros(K,2);
 
 %inizializzo V0 con valori random
-V(:,1) = randn;
+V(:,1) = 0;
 
 finish = 0;
 
@@ -86,14 +85,15 @@ while (finish < K-1)
             Vmin = Inf;
 
             for u = 1 : 5
+                if G(i,u) < Inf
 
-                if (V_u(u) < Vmin)
+                    if (V_u(u) < Vmin)
 
-                    Vmin = V_u(u);
-                    u_opt_ind1(i) = u;
+                        Vmin = V_u(u);
+                        u_opt_ind1(i) = u;
 
+                    end
                 end
-
             end
 
             V(i,2) = Vmin;
@@ -102,11 +102,12 @@ while (finish < K-1)
     end
     
     %controllo che i costi siano diversi tra di loro abbastanza
+    finish = 0;
     for i = 1 : K
         
         if (i ~= terminal_state)
         
-            if (V(i,1) - V(i,2) < 0.00001)
+            if (abs(V(i,1) - V(i,2)) < 0.00001)
 
                 %mi fermo se tutti i valori sono uguali, quindi finish deve essere
                 %K-1 prima di fermarmi
@@ -126,8 +127,8 @@ while (finish < K-1)
             
             if (i ~=terminal_state)
            
-            V(i,1) = V(i,2);
-            V(i,2) = 0;
+                V(i,1) = V(i,2);
+                V(i,2) = 0;
             
             end
             
@@ -137,19 +138,18 @@ while (finish < K-1)
    
 end
 
-if  (finish == K-1)
+
     
-    for i = 1 : K
-        
-        if (i ~= terminal_state)
-    
-        J_opt1(i,1) = V(i,2);
-        
-        end
-    
+for i = 1 : K
+
+    if (i ~= terminal_state)
+
+        J_opt1(i) = V(i,2);
+
     end
-    
+
 end
+
 
 J_opt = J_opt1;
 u_opt_ind = u_opt_ind1;

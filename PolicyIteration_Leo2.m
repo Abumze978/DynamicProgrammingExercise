@@ -1,4 +1,4 @@
-function [ J_opt, u_opt_ind ] = PolicyIteration(P, G)
+function [ J_opt, u_opt_ind ] = PolicyIteration_Leo2(P, G)
 %POLICYITERATION Policy iteration
 %   Solve a stochastic shortest path problem by Policy Iteration.
 %
@@ -72,7 +72,9 @@ while (stop < K-1)
     
     cost_vector = zeros(K,1);
     for i = 1:K
-        cost_vector(i) = G(1,mu_h(i));
+        if i ~= terminal_state
+            cost_vector(i) = G(i,mu_h(i));
+        end
     end
     
     prob_matrix = zeros(K,K);
@@ -81,12 +83,22 @@ while (stop < K-1)
             if r ~= c
                 prob_matrix(r,c) = -P(r,c,mu_h(r));
             else
-                prob_matrix(r,c) = 1;
+                prob_matrix(r,c) = prob_matrix(r,c) + 1;
             end
         end
     end
     
     J_compare(:,2) = linsolve(prob_matrix, cost_vector);
+
+%     % controllo se i costi sono uguali
+%     stop = 0;
+%     for i = 1:K
+%         if i ~= terminal_state
+%             if (J_compare(i,1) - J_compare(i,2) < 0.00001)
+%                 stop = stop + 1;
+%             end
+%         end
+%     end
 
 % PRIMO MODO
 %     J_sym = sym('j_%d',[1 K]);
@@ -149,7 +161,7 @@ while (stop < K-1)
     % POLICY IMPROVEMENT
     
     J_to_min = zeros(5,1);
-
+    
     for i = 1:K
         if i ~= terminal_state
 
@@ -198,5 +210,8 @@ end
 
 J_opt = J_compare(:,1);
 u_opt_ind = mu_h;
+
+J_opt(terminal_state) = 0;
+u_opt_ind(terminal_state) = HOVER;
 
 end
