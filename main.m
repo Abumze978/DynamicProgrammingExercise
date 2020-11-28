@@ -28,7 +28,7 @@ generateRandomWorld = false;
 % Plotting options
 global PLOT_POLICY PLOT_COST
 PLOT_POLICY = true;
-PLOT_COST = true;
+PLOT_COST = false;
 
 %% Global problem parameters
 % IMPORTANT: Do not add or remove any global parameter in main.m
@@ -88,7 +88,7 @@ K=size(stateSpace,1); %numero di righe della stateSpace
 %% Set the following to true as you progress with the files
 transitionProbabilitiesImplemented = true;
 stageCostsImplemented = true;
-valueIterationImplemented = true; 
+valueIterationImplemented = false; 
 policyIterationImplemented = true;
 linearProgrammingImplemented = false;
 
