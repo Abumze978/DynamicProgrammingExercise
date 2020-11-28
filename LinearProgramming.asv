@@ -218,21 +218,11 @@ end
 J = linprog(f,A,Q);
 J_opt = zeros(K,1);
 
-k=1;
-
 for i = 1 : K
     
-    if( i ~= TERMINAL_STATE_INDEX)
-    
-        J_opt(i,1) = J(k,1);
+    if(i == TERMINAL_STATE_INDEX)
         
-        k = k + 1;
-        
-    end
-    
-end
-        
-        
+        J_o
     
     
 
