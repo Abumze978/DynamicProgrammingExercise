@@ -23,7 +23,7 @@ clc;
 mapSize = [15, 20];
 % Set to true to generate a random map of size mapSize, else set to false 
 % to load the pre-exsisting example map
-generateRandomWorld = true;
+generateRandomWorld = false;
 
 % Plotting options
 global PLOT_POLICY PLOT_COST
@@ -145,7 +145,7 @@ if policyIterationImplemented
     disp('Solve stochastic shortest path problem with Policy Iteration');
     
     % TODO: Question d)
-    [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration_Leo(P, G);
+    [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration(P, G);
     
     if size(J_opt_pi,1)~=K || size(u_opt_ind_pi,1)~=K
         disp('[ERROR] the size of J and u must be K')
