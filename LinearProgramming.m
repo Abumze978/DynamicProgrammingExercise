@@ -37,7 +37,9 @@ global TERMINAL_STATE_INDEX
 % IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
 % in the ComputeTerminalStateIndex.m file (see main.m)
 
-% Definisco vettore f della funzione obiettivo
+% Definisco vettore f della funzione obiettivo senza terminal state. In
+% pratica il mio vettore V non avrà mai il terminal state(ERA QUELLO
+% L'ERRORE...)
 
 f = [];
 
@@ -54,7 +56,7 @@ end
 disp(size(f));
 
 %NUOVA SOLUZIONE CHE ELIMINA DA MATRICE A E DA VETTORE Q GLI INGRESSI NON
-%AMMISSIBILI COM'E' GIUSTO CHE SIA, MA LA LINPROG MI DA' CHE E' UNBOUNDED
+%AMMISSIBILI
 
 % Definisco matrice A costruita su cinque strati, uno per ogni ingresso
 % senza input non ammissibili e senza terminal state
@@ -110,26 +112,6 @@ disp(size(A));
 % Definisco vettore Q che è lo "srotolamento" di G senza i costi infiniti e
 % senza terminal state 
 
-% B = zeros(2124,1);
-% 
-% for i = 1 : size(A,2)
-%     
-%     sum = 0;
-%     
-%     for j = 1 : K
-%         
-%         sum = A(i,j) + sum;
-%         
-%     end
-%     
-%     B(i,1) = sum;
-%     
-% end
-
-    
-
-
-
 Q = [];
 
 for u = 1 : 5
@@ -151,69 +133,7 @@ for u = 1 : 5
             
     end
         
-end   
-
-% VECCHIA SOLUZIONE, CHE DAVA UN RISULTATO DEL CAZZO MA ALMENO DAVA UN
-% RISULTATO!
-
-% Definisco matrice A costruita su cinque strati, uno per ogni ingresso
-% A = zeros(K*5 ,K);
-% 
-% for u = 1 : 5
-%     
-%     for i = 1 : K
-% 
-%         i_temp = i + K * (u-1);
-% 
-%         for j = 1 : K 
-%             
-% %             j_temp = j * u;
-%             
-%             if(i ~= TERMINAL_STATE_INDEX)
-% 
-%                 A(i_temp,j) = - P(i,j,u);
-% 
-%                 if(i == j) %diagonale
-%                     
-%                     A(i_temp,j) = A(i_temp,j) + 1;  
-% 
-%                 end
-%                 
-%             end
-%             
-%         end
-% 
-%     end
-%     
-% end
-% 
-% 
-% % Definisco vettore Q che è lo "srotolamento" di G
-% 
-% Q = zeros(K*5,1);
-% 
-% for u = 1 : 5
-%     
-%     for i = 1 : K
-%         
-%         i_temp = i + K*(u-1);
-%         
-%         if(G(i,u) ~= Inf) %inf mi dava problemi. Non dovrebbe essere sbagliato eliminarlo 
-% %                           del tutto visto che moltiplicando
-% %                           per P la riga dovrebbe fare zero e quindi
-% %                           soddisfare il vincolo
-%             
-%             Q(i_temp,1) = G(i,u);
-%             
-%         else
-%             
-%             Q(i_temp,1) = 10;
-%             
-%         end
-%         
-%     end
-%     
-% end
+end  
 
 J = linprog(f,A,Q);
 J_opt = zeros(K,1);
@@ -274,6 +194,3 @@ for i = 1 : K
     end
 
 end
-
-
-
