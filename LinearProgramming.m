@@ -53,8 +53,6 @@ for i = 1 : K
          
 end
 
-disp(size(f));
-
 %NUOVA SOLUZIONE CHE ELIMINA DA MATRICE A E DA VETTORE Q GLI INGRESSI NON
 %AMMISSIBILI
 
@@ -107,8 +105,6 @@ for u = 1 : 5
     
 end
 
-disp(size(A));
-
 % Definisco vettore Q che è lo "srotolamento" di G senza i costi infiniti e
 % senza terminal state 
 
@@ -150,11 +146,7 @@ for i = 1 : K
         
     end
     
-end
-        
-        
-    
-    
+end 
 
 u_opt_ind = zeros(K,1);
 

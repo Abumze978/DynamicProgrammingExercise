@@ -23,12 +23,12 @@ clc;
 mapSize = [15, 20];
 % Set to true to generate a random map of size mapSize, else set to false 
 % to load the pre-exsisting example map
-generateRandomWorld = false;
+generateRandomWorld = true;
 
 % Plotting options
 global PLOT_POLICY PLOT_COST
 PLOT_POLICY = true;
-PLOT_COST = true;
+PLOT_COST = false;
 
 %% Global problem parameters
 % IMPORTANT: Do not add or remove any global parameter in main.m
@@ -88,8 +88,8 @@ K=size(stateSpace,1); %numero di righe della stateSpace
 %% Set the following to true as you progress with the files
 transitionProbabilitiesImplemented = true;
 stageCostsImplemented = true;
-valueIterationImplemented = false; 
-policyIterationImplemented = false;
+valueIterationImplemented = true; 
+policyIterationImplemented = true;
 linearProgrammingImplemented = true;
 
 %% Compute the terminal state index
@@ -109,7 +109,7 @@ if transitionProbabilitiesImplemented
     
     % TODO: Question b)
  
-    P = ComputeTransitionProbabilities_def(stateSpace, map);
+    P = ComputeTransitionProbabilities(stateSpace, map);
 
 
 end
@@ -145,7 +145,7 @@ if policyIterationImplemented
     disp('Solve stochastic shortest path problem with Policy Iteration');
     
     % TODO: Question d)
-    [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration_Leo2(P, G);
+    [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration_Leo(P, G);
     
     if size(J_opt_pi,1)~=K || size(u_opt_ind_pi,1)~=K
         disp('[ERROR] the size of J and u must be K')

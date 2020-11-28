@@ -30,7 +30,7 @@ function G = ComputeStageCosts(stateSpace, map)
     global TERMINAL_STATE_INDEX
 
 
-P = ComputeTransitionProbabilities_def(stateSpace,map);    
+P = ComputeTransitionProbabilities(stateSpace,map);    
     
 Stage_costs_matrix = zeros(K,5);
 

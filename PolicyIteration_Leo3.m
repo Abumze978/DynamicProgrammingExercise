@@ -1,4 +1,4 @@
-function [ J_opt, u_opt_ind ] = PolicyIteration_Leo2(P, G)
+function [ J_opt, u_opt_ind ] = PolicyIteration_Leo3(P, G)
 %POLICYITERATION Policy iteration
 %   Solve a stochastic shortest path problem by Policy Iteration.
 %
