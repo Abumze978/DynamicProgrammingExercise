@@ -23,12 +23,12 @@ clc;
 mapSize = [15, 20];
 % Set to true to generate a random map of size mapSize, else set to false 
 % to load the pre-exsisting example map
-generateRandomWorld = false;
+generateRandomWorld = true;
 
 % Plotting options
 global PLOT_POLICY PLOT_COST
 PLOT_POLICY = true;
-PLOT_COST = false;
+PLOT_COST = true;
 
 %% Global problem parameters
 % IMPORTANT: Do not add or remove any global parameter in main.m
@@ -107,10 +107,7 @@ if transitionProbabilitiesImplemented
     % the entry P(i, j, l) representes the transition probability from state i
     % to state j if control input l is applied.
     
-    % TODO: Question b)
- 
     P = ComputeTransitionProbabilities(stateSpace, map);
-
 
 end
 %% Compute stage costs
@@ -121,10 +118,8 @@ if stageCostsImplemented
     % The stage cost matrix has the dimension (K x L), i.e. the entry G(i, l)
     % represents the cost if we are in state i and apply control input l.
     
-    % TODO: Question c)
     G = ComputeStageCosts(stateSpace, map);
-      
-   
+
 end
 
 %% Solve stochastic shortest path problem
@@ -133,8 +128,6 @@ end
 if valueIterationImplemented
     disp('Solve stochastic shortest path problem with Value Iteration');
     
-    % TODO: Question d)
-
     [ J_opt_vi, u_opt_ind_vi ] = ValueIteration(P, G);
     
     if size(J_opt_vi,1)~=K || size(u_opt_ind_vi,1)~=K
@@ -144,7 +137,6 @@ end
 if policyIterationImplemented
     disp('Solve stochastic shortest path problem with Policy Iteration');
     
-    % TODO: Question d)
     [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration(P, G);
     
     if size(J_opt_pi,1)~=K || size(u_opt_ind_pi,1)~=K
@@ -154,7 +146,6 @@ end
 if linearProgrammingImplemented
     disp('Solve stochastic shortest path problem with Linear Programming');
     
-    %TODO: Question d)
     [ J_opt_lp, u_opt_ind_lp ] = LinearProgramming(P, G);
     
     if size(J_opt_lp,1)~=K || size(u_opt_ind_lp,1)~=K
