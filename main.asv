@@ -33,7 +33,7 @@ PLOT_COST = true;
 %% Global problem parameters
 % IMPORTANT: Do not add or remove any global parameter in main.m
 global GAMMA R Nc P_WIND
-GAMMA  = 0.6; %0.2; % Shooter gamma factor
+GAMMA  = 0%0.2; % Shooter gamma factor
 R = 3; %2; % Shooter range
 Nc = 1; %10; % Time steps required to bring drone to base when it crashes
 P_WIND = 0.5; %0.1; % Gust of wind probability
