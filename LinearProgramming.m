@@ -37,10 +37,8 @@ global TERMINAL_STATE_INDEX
 % IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
 % in the ComputeTerminalStateIndex.m file (see main.m)
 
-% Definisco vettore f della funzione obiettivo senza terminal state. In
-% pratica il mio vettore V non avrà mai il terminal state(ERA QUELLO
-% L'ERRORE...)
 
+%Defining vector f without terminal state
 f = [];
 
 for i = 1 : K
@@ -53,12 +51,11 @@ for i = 1 : K
          
 end
 
-%NUOVA SOLUZIONE CHE ELIMINA DA MATRICE A E DA VETTORE Q GLI INGRESSI NON
-%AMMISSIBILI
 
-% Definisco matrice A costruita su cinque strati, uno per ogni ingresso
-% senza input non ammissibili e senza terminal state
-% Ad ogni iterazione aggiungo una riga alla matrice A
+
+%Defining matrix A built on 5 layers, one for each input. Non admissible
+%inputs and terminal state are not considered
+%A is built iteratively line by line
 
 A = [];
 
@@ -68,19 +65,19 @@ for u = 1 : 5
         
         if(i ~= TERMINAL_STATE_INDEX) 
 
-            if(G(i,u) == Inf)  %controllo ammissibilità input
+            if(G(i,u) == Inf)  %check if it's an admissible input
 
                 %do nothing
 
-            else %se l'input è ammissibile allora aggiungo ad A un vettore riga con le probabilità P(i,j,u)
+            else %if input is admissible then I add a line to A
 
                 P_vector = [];
 
-                for k = 1 : K  %riempio una riga di A
+                for k = 1 : K  %filling a line of A
                     
                     if(k ~= TERMINAL_STATE_INDEX) 
                         
-                        if(k == i)  %diagonale
+                        if(k == i)  %diagonal
 
                             P_vector = [P_vector,1 - P(i,k,u)];
                             
@@ -105,8 +102,8 @@ for u = 1 : 5
     
 end
 
-% Definisco vettore Q che è lo "srotolamento" di G senza i costi infiniti e
-% senza terminal state 
+%Defining vector Q which is the vectorization of stage costs matrix without
+%non admissible inputs and terminal state
 
 Q = [];
 
@@ -114,8 +111,6 @@ for u = 1 : 5
     
     for i = 1 : K
         
-        %non aggiungo i costi infiniti(corrispondenti a input non ammissibili)
-        %e non considero il terminal state
         if(G(i,u) == Inf || i == TERMINAL_STATE_INDEX)  
             
             %do nothing
