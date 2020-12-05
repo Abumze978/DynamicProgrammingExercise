@@ -31,7 +31,7 @@ function [ J_opt, u_opt_ind ] = PolicyIteration(P, G)
 global K HOVER
 
 %% Handle terminal state
-% Do yo need to do something with the teminal state before starting policy
+% Do you need to do something with the terminal state before starting policy
 % iteration?
 global TERMINAL_STATE_INDEX
 % IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
@@ -39,15 +39,19 @@ global TERMINAL_STATE_INDEX
 
 terminal_state = TERMINAL_STATE_INDEX;
 
+% Initialization of optimal cost and policy
 J_opt = zeros(K,1);
 u_opt_ind = zeros(K,1);
 
-% gestisco il caso terminal state
+% Since I will iterate the procedure above all i except for the terminal
+% state, I set these values now: 
+% the cost to go from starting at the terminal state is zero
+% the optimal input is HOVER
 J_opt(terminal_state) = 0;
 u_opt_ind(terminal_state) = HOVER;
 
 %% INITIALIZATION
-% initialize with a proper policy
+% initialization with a proper policy
 mu_h = zeros(K,1);
 
 for i = 1:K
@@ -56,13 +60,20 @@ for i = 1:K
     end
 end
 
+% This matrix will compare the costs of the current and the previous
+% iteration
 J_compare = zeros(K,2);
 
 stop = 0;
 
+% start of the Policy Iteration procedure
 while (stop < K-1)
 
     % POLICY EVALUATION
+    
+    % Defining matrix A. Non admissible inputs and terminal state are not
+    % considered.
+    % A is built iteratively line by line
 
     A = [];
 
@@ -70,19 +81,19 @@ while (stop < K-1)
 
         if(i ~= TERMINAL_STATE_INDEX) 
 
-            if(G(i,mu_h(i)) == Inf)  %controllo ammissibilità input
+            if(G(i,mu_h(i)) == Inf)  % checking admissibility of input
 
                 %do nothing
 
-            else %se l'input è ammissibile allora aggiungo ad A un vettore riga con le probabilità P(i,j,u)
+            else  % if input is admissible then I add a line to A
 
                 P_vector = [];
 
-                for k = 1 : K  %riempio una riga di A
+                for k = 1 : K  % filling a line of A
 
                     if(k ~= TERMINAL_STATE_INDEX) 
 
-                        if(k == i)  %diagonale
+                        if(k == i)  % diagonal
 
                             P_vector = [P_vector,1 - P(i,k,mu_h(i))];
 
@@ -104,13 +115,14 @@ while (stop < K-1)
         end
 
     end
+    
+    % Defining vector Q which is the vectorization of stage costs matrix without
+    % non admissible inputs and terminal state
 
     Q = [];
 
     for i = 1 : K
 
-        %non aggiungo i costi infiniti(corrispondenti a input non ammissibili)
-        %e non considero il terminal state
         if(i == TERMINAL_STATE_INDEX || G(i,mu_h(i)) == Inf) 
 
             %do nothing
@@ -175,9 +187,11 @@ while (stop < K-1)
         end
     end
 
-    % alla fine di questo ciclo ho una nuova policy
+    % at the end of this for loop I get a new policy
 
-    % controllo se i costi sono uguali
+    % I need to verify that for each state i the optimal costs to go are the
+    % same between he current iteration and the previous one. I do the 
+    % comparison for all states i except for the terminal state
     stop = 0;
     for i = 1:K
         if i ~= terminal_state
@@ -187,6 +201,8 @@ while (stop < K-1)
         end
     end
     
+    % I now move the second column to the first, deleting the values of the previous iteration.
+    % I set the second column to zero, and this will be filled in the next iteration of the while condition 
     for i = 1:K
         if i ~= terminal_state
             J_compare(i,1) = J_compare(i,2);
@@ -196,12 +212,16 @@ while (stop < K-1)
     
 end
 
-
+% At the end of the while condition the matrix J_compare will have on the second column 
+% the optimal cost-to-go 
 for i = 1:K
     if i ~= terminal_state
         J_opt(i) = J_compare(i,1);
     end
 end
+
+% The vector u_opt_ind has been updated in the last iteration on the while
+% condition
 u_opt_ind = mu_h;
 
 end
