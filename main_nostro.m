@@ -33,10 +33,10 @@ PLOT_COST = true;
 %% Global problem parameters
 % IMPORTANT: Do not add or remove any global parameter in main.m
 global GAMMA R Nc P_WIND
-GAMMA  = 0.2; % Shooter gamma factor
-R = 2; % Shooter range
-Nc = 10; % Time steps required to bring drone to base when it crashes
-P_WIND = 0.1; % Gust of wind probability
+GAMMA  = 0.6; %0.2; % Shooter gamma factor
+R = 3; %2; % Shooter range
+Nc = 1; %10; % Time steps required to bring drone to base when it crashes
+P_WIND = 0.5; %0.1; % Gust of wind probability
 
 % IDs of elements in the map matrix
 global FREE TREE SHOOTER PICK_UP DROP_OFF BASE 
@@ -72,10 +72,10 @@ disp('Generate state space');
 % Generate a (K x 3)-matrix 'stateSpace', where each accessible cell is
 % represented by two rows (with and without carrying a package).
 stateSpace = [];
-for m = 1 : size(map, 1)
-    for n = 1 : size(map, 2)
-        if map(m, n) ~= TREE
-            stateSpace = [stateSpace;
+for m = 1 : size(map, 1)       %numero di righe(che in verità son le colonne: girare pc per capire!)
+    for n = 1 : size(map, 2)   %numero di colonne
+        if map(m, n) ~= TREE    %se NON è un albero
+            stateSpace = [stateSpace;   %se è un albero stateSpace rimane invariata
                           m, n, 0;
                           m, n, 1];
         end
@@ -83,7 +83,7 @@ for m = 1 : size(map, 1)
 end
 % State space size
 global K
-K=size(stateSpace,1);
+K=size(stateSpace,1); %numero di righe della stateSpace
 
 %% Set the following to true as you progress with the files
 transitionProbabilitiesImplemented = true;
@@ -97,7 +97,7 @@ global TERMINAL_STATE_INDEX
 if transitionProbabilitiesImplemented
     % TODO: Question a)
     TERMINAL_STATE_INDEX = ComputeTerminalStateIndex(stateSpace, map);
-end                  
+end 
 %% Compute transition probabilities
 if transitionProbabilitiesImplemented
     disp('Compute transition probabilities');
@@ -107,10 +107,9 @@ if transitionProbabilitiesImplemented
     % the entry P(i, j, l) representes the transition probability from state i
     % to state j if control input l is applied.
     
-    % TODO: Question b)
     P = ComputeTransitionProbabilities(stateSpace, map);
-end
 
+end
 %% Compute stage costs
 if stageCostsImplemented 
     disp('Compute stage costs');
@@ -119,8 +118,8 @@ if stageCostsImplemented
     % The stage cost matrix has the dimension (K x L), i.e. the entry G(i, l)
     % represents the cost if we are in state i and apply control input l.
     
-    % TODO: Question c)
     G = ComputeStageCosts(stateSpace, map);
+
 end
 
 %% Solve stochastic shortest path problem
@@ -129,7 +128,6 @@ end
 if valueIterationImplemented
     disp('Solve stochastic shortest path problem with Value Iteration');
     
-    % TODO: Question d)
     [ J_opt_vi, u_opt_ind_vi ] = ValueIteration(P, G);
     
     if size(J_opt_vi,1)~=K || size(u_opt_ind_vi,1)~=K
@@ -139,7 +137,6 @@ end
 if policyIterationImplemented
     disp('Solve stochastic shortest path problem with Policy Iteration');
     
-    % TODO: Question d)
     [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration(P, G);
     
     if size(J_opt_pi,1)~=K || size(u_opt_ind_pi,1)~=K
@@ -149,12 +146,12 @@ end
 if linearProgrammingImplemented
     disp('Solve stochastic shortest path problem with Linear Programming');
     
-    % TODO: Question d)
     [ J_opt_lp, u_opt_ind_lp ] = LinearProgramming(P, G);
     
     if size(J_opt_lp,1)~=K || size(u_opt_ind_lp,1)~=K
         disp('[ERROR] the size of J and u must be K')
     end
+  
 end
 
 %% Plot results
