@@ -5,7 +5,7 @@ possible. To achieve this, the drone must first fly to a pick-up station to coll
 then reach a delivery station to discharge it. Along the way, the drone must avoid hazards such
 as trees or angry residents who try to shoot it down.
 
-
+![alt text](https://github.com/Abumze978/DynamicProgrammingExercise/blob/main/Screenshot%20(23).png)
 
 
 The drone operates in a world that is represented by a M x N matrix. At each time-step the drone could apply one of the allowable control inputs: 
