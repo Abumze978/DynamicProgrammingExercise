@@ -20,3 +20,16 @@ it collects one. If the drone has not crashed by this point and is at a delivery
 carrying a package, the task terminates. Whenever the drone crashes, it is brought to the base station and starts the next time step there without a package. This procedure takes a total of N_c time steps. 
 
 ## Resolution and Implementation
+
+We had to approach the problem in three steps:
+
+1- Implement an algorithm that, given a randomly generated map, computes the transition probability tensor
+
+2- Implement an algorithm that, given a randomly generated map, computes the stage costs for each state and input
+
+3- Implement three different algorithms to obtain the optimal policy: Value Iteration, Policy Iteration and Linear Programming
+
+
+
+
+
