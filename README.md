@@ -21,7 +21,8 @@ carrying a package, the task terminates. Whenever the drone crashes, it is broug
 
 ## Resolution and Implementation
 
-We had to approach the problem in three steps:
+In order to find the policy minimizing the expected number of time steps required to successfully deliver a
+package, we had to approach the problem in three steps:
 
 1- Implement an algorithm that, given a randomly generated map, computes the transition probability tensor
 
