@@ -42,11 +42,9 @@ terminal_state = TERMINAL_STATE_INDEX;
 % Initialization of optimal cost and policy
 J_opt = zeros(K,1);
 u_opt_ind = zeros(K,1);
-
-% Since I will iterate the procedure above all i except for the terminal
-% state, I set these values now: 
-% the cost to go from starting at the terminal state is zero
-% the optimal input is HOVER
+ 
+%Cost to go from terminal state = 0
+%Optimal input at terminal state = HOVER
 J_opt(terminal_state) = 0;
 u_opt_ind(terminal_state) = HOVER;
 
@@ -66,7 +64,7 @@ J_compare = zeros(K,2);
 
 stop = 0;
 
-% start of the Policy Iteration procedure
+%Policy Iteration procedure
 while (stop < K-1)
 
     % POLICY EVALUATION
@@ -85,11 +83,11 @@ while (stop < K-1)
 
                 %do nothing
 
-            else  % if input is admissible then I add a line to A
+            else  % if input is admissible then add a new line to matrix A
 
                 P_vector = [];
 
-                for k = 1 : K  % filling a line of A
+                for k = 1 : K  % filling new line of matrix A
 
                     if(k ~= TERMINAL_STATE_INDEX) 
 
@@ -116,8 +114,8 @@ while (stop < K-1)
 
     end
     
-    % Defining vector Q which is the vectorization of stage costs matrix without
-    % non admissible inputs and terminal state
+    % Defining vector Q, which is the vectorization of stage costs matrix
+    % neglecting non admissible inputs and terminal state
 
     Q = [];
 
@@ -187,11 +185,11 @@ while (stop < K-1)
         end
     end
 
-    % at the end of this for loop I get a new policy
+    %This for loops results in a new policy
 
-    % I need to verify that for each state i the optimal costs to go are the
-    % same between he current iteration and the previous one. I do the 
-    % comparison for all states i except for the terminal state
+    %Check needed to verify that for each state i the optimal costs to go is the
+    %same between current and previous iteration.
+    %Comparison is done for all states i except for the terminal state
     stop = 0;
     for i = 1:K
         if i ~= terminal_state
@@ -201,8 +199,8 @@ while (stop < K-1)
         end
     end
     
-    % I now move the second column to the first, deleting the values of the previous iteration.
-    % I set the second column to zero, and this will be filled in the next iteration of the while condition 
+    %Second column is moved to the first, deleting the values of the previous iteration.
+    %Second column is set to zero, and this will be filled with the next iteration values 
     for i = 1:K
         if i ~= terminal_state
             J_compare(i,1) = J_compare(i,2);
@@ -212,7 +210,7 @@ while (stop < K-1)
     
 end
 
-% At the end of the while condition the matrix J_compare will have on the second column 
+% At the end of the while condition, the matrix J_compare have on the second column 
 % the optimal cost-to-go 
 for i = 1:K
     if i ~= terminal_state
@@ -220,8 +218,8 @@ for i = 1:K
     end
 end
 
-% The vector u_opt_ind has been updated in the last iteration on the while
-% condition
+% The vector mu_h has been updated in the last iteration of the while
+% condition, hence corresponds to the optimal inputs
 u_opt_ind = mu_h;
 
 end

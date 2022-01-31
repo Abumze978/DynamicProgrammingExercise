@@ -107,27 +107,25 @@ for i = 1 : K
         
         %When appling one of the possible inputs, the drone can stay in the
         %same cell or move by one cell depending on the input chosen. 
-        %So I will enter the following if condition only if the j I picked belongs to one 
-        %of the 5 aformentioned cells
+        %The following if condition is entered only if the j picked belongs to 
+        %the 5 aformentioned ones
         
         if(((m_j == m_i + 1 && n_j == n_i) || (m_j == m_i - 1 && n_j == n_i) || (m_j == m_i && n_j == n_i + 1) || (m_j == m_i && n_j == n_i - 1) || (m_j == m_i && n_j == n_i)))
             
             for u = 1 : 5
                 
-                %if the drone starts from the state corresponding to the drop_off variable
-                %the probability that it remains there for any chosen
-                %input is 1
+                %if the drone starts from the state corresponding to the
+                %drop_off variable, the probability that it remains there 
+                %for any chosen input is 1                
                 if (i ~= drop_off)  
                     
-                    %There are only 2 kind of transition in which we go
-                    %from a state to another with a different 'package
-                    %state' : the PICK_UP station on when the drone crashes
-                    %while holding the package
+                    %Edge cases where 'package state' changes between
+                    %transitions (while over the PICK_UP station and while crashing holding the package),
+                    %are not covered in the next if condition.
                     if (pack_i == pack_j)
                         
-                        %I update the probability matrix if and only if the chosen
-                        %input and the movement towards a cell are
-                        %consistent 
+                        %The probability matrix is updated if the chosen
+                        %input and the movement towards a cell are possible
                         if ((u == NORTH && n_j == n_i + 1 && m_j == m_i) || (u == SOUTH && n_j == n_i - 1 && m_j == m_i) || (u == EAST && m_j == m_i + 1 && n_i == n_j) || (u == WEST && m_j == m_i - 1 && n_i == n_j) || (u == HOVER && m_j == m_i && n_i == n_j))
                             
                             %If the drone, starting from a state i, will
@@ -135,13 +133,10 @@ for i = 1 : K
                             %package, it will pick the package 
                             if (j == pick_up) 
                                 
-                                %Here I need to update the probability to
-                                %go from state i to j+1 instead of j
-                                %because since I am inside the if condition at row
-                                %129, if j corresponds to the pick_up variable, it
-                                %means that i package state is 0, so the
-                                %drone will pick the package, this
-                                %corresponds to state j+1 of the StateSpace
+                                %state i 'package state' = 0. If drone after
+                                %movement ends in pick_up station, it
+                                %will pick up the package -> 'package state' = 1,
+                                %which corresponds not to state j, but to state j + 1
                                 Transition_probabilities_matrix(i,j+1,u) = (1 - P_WIND) * (1-Crashing_probabilities(m_j,n_j));
                                 
                                 %Probability to go from a state without a
@@ -149,10 +144,7 @@ for i = 1 : K
                                 %picking up the package
                                 Transition_probabilities_matrix(i,j,u) = 0;
                                 
-                                
-                            %if my j state corresponds to the drop_off
-                            %variable it means that the drone started from
-                            %state i with a package (if condition row 129)
+                            %drone started from state i with 'package state' = 1
                             elseif (j == drop_off) 
                                 
                                 %The probability of starting with a package
@@ -172,21 +164,17 @@ for i = 1 : K
                                 
                             end
                       
-                            %Now I need to update the probabilities of
-                            %moving by two cells due to the wind. I take
-                            %all the 9 neighbour cells of the one corresponding 
-                            %to the state j, which was the cell where
-                            %the drone wanted to go without wind
+                            %Transition probabilities matrix updated in case of 2 cells motion due to wind.
+                            %All 9 neighbouring cells of j are considered 
+                            %(with j being the final drone destination in absence of wind)
                             for m = m_j-1 : m_j+1
                                 
                                 for n = n_j-1 : n_j+1
                                     
                                     is_neighbour = 0;
                                     
-                                    %Since wind cannot move the drone
-                                    %diagonally, I enter the following if
-                                    %condition only if m and n corresponds
-                                    %to a consistent wind movement
+                                    %Only wind-possible motions are considered in the following if condition
+                                    %(diagonal motions not considered)
                                     if ((abs(m_j-m) == 0 && abs(n_j-n) == 1) || (abs(m_j-m) == 1 && abs(n_j-n) == 0))     % cioe' se (m,n) e' uno stato a N,S,E,W di j
                                         
                                         is_neighbour = 1;
@@ -196,34 +184,25 @@ for i = 1 : K
                                     
                                     if (is_neighbour == 1)  
                                      
-                                        %If the cell where the wind
-                                        %moves the drone exists in the
-                                        %StateSpace, this variable will
-                                        %be the index corresponding to that
-                                        %cell
+                                        %flag that indicates if the cell where wind moves 
+                                        %the drone exists in the StateSpace
                                         final_state  = 0;
                                         
-                                        %The following variables will be 1
-                                        %in the corresponding situation
+                                        %flags for pick_up or drop_off stations
+                                        %after wind action
                                         pick = 0;
                                         drop = 0;
                                         
-                                        %These variables count the number of
-                                        %borders or trees surrounding a cell,
-                                        %respectively
+                                        %Counters for number of borders and trees
+                                        %surrounding a cell
                                         count_borders = 0;
                                         tree = 0;
-                                        
-                                        %I need to verify that the cell in
-                                        %which the wind moves the drone
-                                        %exists in the StateSpace,
-                                        %otherwise it means that the wind
-                                        %moved the drone towards a tree or
-                                        %outside the map
+
+                                        %check if the wind moved the drone
+                                        %outside the StateSpace
                                         for k = 1 : K    
                                             
-                                            %I enter the following if condition 
-                                            %only if the cell (m,n) exists in
+                                            %if condition entered only if the cell (m,n) exists in
                                             %the StateSpace index
                                             if (stateSpace(k,1) == m && stateSpace(k,2) == n) 
                                                 
@@ -231,8 +210,7 @@ for i = 1 : K
                                                 %moved the drone corresponds to the pick_up
                                                 %station and the drone started from state i
                                                 %without the package, the final state will be the
-                                                %one corresponding to the cell where the wind moved
-                                                %the drone, but with the package
+                                                %the pick_up station, but with the package
                                                 if (map(stateSpace(k,1),stateSpace(k,2)) == PICK_UP && stateSpace(k,3) == 1 && pack_i == 0)
                                                    
                                                     final_state = k; 
@@ -241,16 +219,16 @@ for i = 1 : K
                                                 %Else if the wind moves the
                                                 %drone to the drop_off station and the starting
                                                 %state i was with package, the drone will end up in
-                                                %the state corresponding to
-                                                %the cell where the wind moved it, but without the
-                                                %package
+                                                %the state corresponding to the drop_off station
+                                                % without the package
                                                 elseif (map(stateSpace(k,1),stateSpace(k,2)) == DROP_OFF &&stateSpace(k,3) == 0 && pack_i == 1)
                                                    
                                                     final_state = k;
                                                     drop = 1;
                                                 
                                                 %All other cases where the
-                                                %package state i and k corresponds
+                                                %package state i and k (k = drone state after wind action)
+                                                %corresponds
                                                 elseif (stateSpace(k,3) == pack_i)  
                                                     
                                                     final_state = k;
@@ -279,8 +257,9 @@ for i = 1 : K
                                            
                                             count_borders = count_borders + 1;
                                             
-                                        %I count the number of TREEs surrouning the cell in which was the drone
-                                        %before the wind made it crash
+                                        %I count the number of TREEs
+                                        %surrouning the cell in which the
+                                        %drone was before the wind made it crash
                                         elseif (final_state == 0 && map(m,n) == TREE)
                                             
                                             tree = tree + 1;
@@ -296,7 +275,8 @@ for i = 1 : K
                                         %If the variable pick is 1 it means that the wind moved the drone 
                                         %to the pick_up station and the drone started from state i
                                         %without a package.
-                                        %If pick = 1, the final state will be necessarily admissible
+                                        %If pick == 1, the final_state will
+                                        %be necessarily admissible (final_state != 0)
                                         elseif (pick == 1)
                                            
                                                 
@@ -306,7 +286,8 @@ for i = 1 : K
                                         %If the variable drop is 1 it means that the wind moved the drone 
                                         %to the drop_off station and the drone started from state i
                                         %with a package.
-                                        %If drop = 1, the final state will be necessarily admissible
+                                        %If drop == 1, the final state will
+                                        %be necessarily admissible (final_state != 0)
                                         elseif (drop == 1)
                                             
                                                 Transition_probabilities_matrix(i,final_state,u) = 0.25 * P_WIND * (1 - Crashing_probabilities(stateSpace(final_state-1,1),stateSpace(final_state-1,2)));
@@ -317,7 +298,7 @@ for i = 1 : K
                                         elseif (final_state == 0 && count_borders > 0) 
                                             
                                             Transition_probabilities_matrix(i,base,u) = (count_borders * 0.25 * P_WIND);
-                                        %If the wind ,ade the drone crashes
+                                        %If the wind made the drone crashes
                                         %against a TREE
                                         elseif (final_state == 0 && tree > 0)
                                             
@@ -344,13 +325,6 @@ for i = 1 : K
     end
 end
 
-
-
-%Up to now I have never updated the probability of going to the base,
-%except for those cases where I move to the base volountarly, without a
-%cras, or if the drone crashes against a tree or out of the map.
-%I need to calculate all the other values
-
 for i = 1 : K
 
     for u = 1 : 5
@@ -361,8 +335,7 @@ for i = 1 : K
             
             if(j ~= base) 
                 
-                %I calculate the sum of all the probabilities of going from
-                %a certain state i to all the state j, except for j = base 
+                %Probabilities of going from a certain state i to all the state j, except for j = base 
                 sum(i,u) = sum(i,u) + Transition_probabilities_matrix(i,j,u);
                 
             end

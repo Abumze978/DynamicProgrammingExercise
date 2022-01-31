@@ -42,36 +42,35 @@ terminal_state = TERMINAL_STATE_INDEX;
 J_opt1 = zeros(K,1);
 u_opt_ind1 = zeros(K,1);
 
-%Since I will iterate the procedure above all i except for the terminal
-%state, I set these values now: 
-%the cost to go from starting at the terminal state is zero
-%the optimal input is HOVER
+%Cost to go from terminal state = 0
+%Optimal input at terminal state = HOVER
 J_opt1(terminal_state) = 0;
 u_opt_ind1(terminal_state) = HOVER;
 
-%This matrix will compare the values of the current and the previous
-%iteration, all previous iterations will not be recorded, since are useless
+%This matrix compares the values of the current and the previous
+%iteration, all previous iterations are discarded
 V = zeros(K,2);
 
-%Arbitrary initialization of V at iteration 0
+%Arbitrary initialization of V
 V(:,1) = 0;
 
 %This variable will have value K-1 when the Value Iteration process will be
 %finished
 finish = 0;
 
-%Until the Value Iteration process is not termined 
+%Value Iteration process
 while (finish < K-1)
     
     for i = 1 : K
         
-        %I perform the VI process for all the states except of the terminal state
+        %VI is applied to all states except for the terminal state
         if (i ~= terminal_state)
         
-            %This array will memorize all costs at a certain iteration
+            %This array memorizes all costs at a certain iteration relative
+            %to a specific input
             V_u = zeros(5,1);
 
-            %I calculate the cost connected to using a certain input
+            %Cost resulting from using a certain input
             for u = 1 : 5
 
                 Prob = 0;
@@ -88,36 +87,34 @@ while (finish < K-1)
 
             Vmin = Inf;
 
-            %I look for the minimum value of V_u array
+            %Minimum value of V_u array
             for u = 1 : 5
                 
-                %But I need to consider only the possible inputs, that are
+                %Only admissible inputs has to be considered. Correspond to
                 %the ones with an expected cost less than infinity 
                 if G(i,u) < Inf
 
-                    %I compute the minimum
+                    %Calculate the minimum
                     if (V_u(u) < Vmin)
 
                         Vmin = V_u(u);
                         
-                        %Assignment of the optimal insput, consistentely
-                        %with the optimal cost 
+                        %Assignment of relative optimal input
                         u_opt_ind1(i) = u;
 
                     end
                 end
             end
 
-            %The optimal cost of the current iteration
+            %Optimal cost of the current iteration
             V(i,2) = Vmin;
 
         end
     end
     
-    %I need to verify that for each state i the optimal costs to go are the
-    %same between he current iteration (second coloum on V) and the
-    %previous one. I do the comparison for all states i except for the
-    %terminal state
+    %Check needed to verify that for each state i the optimal costs to go is the
+    %same between current and previous iteration.
+    %Comparison is done for all states i except for the terminal state
     finish = 0;
     for i = 1 : K
         
@@ -133,11 +130,10 @@ while (finish < K-1)
         
     end
     
-    %If values are different between the two most recent iteration I will
-    %move the secondo coloumn to the first, deleting the values of the
-    %previous iteration, that will be useless from now on. The current
-    %second coloumn is made up of zeros, will be filled in the next
-    %iteration of the while condition 
+    %If values are different between the two most recent iteration, s
+    %second column is moved to the first, descarding values of the
+    %previous iteration. The current second column is made up of zeros
+    %and is filled during the next iteration
     if (finish < K-1)
        
         for i = 1 : K
@@ -171,8 +167,8 @@ end
 
 J_opt = J_opt1;
 
-%The vector u_opt_ind has been updated in the last iteration on the while
-%condition
+% Vector u_opt_ind1 has been updated in the last iteration of the while
+% condition, hence corresponds to the optimal inputs
 u_opt_ind = u_opt_ind1;
 
 

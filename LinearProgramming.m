@@ -37,7 +37,6 @@ global TERMINAL_STATE_INDEX
 % IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
 % in the ComputeTerminalStateIndex.m file (see main.m)
 
-
 %Defining vector f without terminal state
 f = [];
 
@@ -54,8 +53,8 @@ end
 
 
 %Defining matrix A built on 5 layers, one for each input. Non admissible
-%inputs and terminal state are not considered
-%A is built iteratively line by line
+%inputs and terminal state are not considered.
+%A is built iteratively layer by layer, line by line
 
 A = [];
 
@@ -69,11 +68,11 @@ for u = 1 : 5
 
                 %do nothing
 
-            else %if input is admissible then I add a line to A
+            else %if input is admissible then add a line to A
 
                 P_vector = [];
 
-                for k = 1 : K  %filling a line of A
+                for k = 1 : K  %filling new line of A matrix
                     
                     if(k ~= TERMINAL_STATE_INDEX) 
                         
@@ -102,8 +101,8 @@ for u = 1 : 5
     
 end
 
-%Defining vector Q which is the vectorization of stage costs matrix without
-%non admissible inputs and terminal state
+%Defining vector Q which is the vectorization of stage costs matrix
+%neglecting non admissible inputs and terminal state
 
 Q = [];
 
