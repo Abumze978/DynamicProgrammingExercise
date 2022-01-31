@@ -30,7 +30,9 @@ package, we had to approach the problem in three steps:
 
 3- Implement three different algorithms to obtain the optimal policy: Value Iteration, Policy Iteration and Linear Programming
 
+## How to run the program 
 
+To run the program it is sufficient to have the whole repository in Matlab, and run the "main.m" file
 
 
 
