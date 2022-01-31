@@ -168,6 +168,6 @@ end
 if linearProgrammingImplemented
     MakePlots(map, stateSpace, J_opt_lp, u_opt_ind_lp, 'Linear programming');
 end
-
+ 
 %% Terminated
 disp('Terminated');
