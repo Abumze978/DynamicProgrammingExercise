@@ -74,7 +74,7 @@ for m = 2 : size(map,1) + 1
                 
                 distance = abs(m - (stateSpace(shooters(s),1) + 1)) + abs(n - (stateSpace(shooters(s),2) + 1)); %manhattan distance
                 
-                if(distance <= R) %somma perchè unione. Basta infatti che uno solo mi becchi e sono morto
+                if(distance <= R)
                     
                     Crashing_probabilities(m,n) = Crashing_probabilities(m,n) + GAMMA./(distance + 1);
                     
@@ -204,7 +204,7 @@ for m = m_base - 2 : m_base + 2
 
                         end
                         
-                        %fattore di correzione per la crashing
+                        %correction factor for crashing
                         %probabilities
                         m_temp = m_temp + 1;
                         n_temp = n_temp + 1;

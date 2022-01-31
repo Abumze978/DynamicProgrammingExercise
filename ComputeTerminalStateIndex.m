@@ -19,7 +19,6 @@ function stateIndex = ComputeTerminalStateIndex(stateSpace, map)
 %           stateSpace matrix
 global DROP_OFF
 
-
 for m = 1 : size(map, 1)       
     for n = 1 : size(map, 2)   
         if map(m, n) == DROP_OFF
